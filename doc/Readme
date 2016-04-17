@@ -1,0 +1,12 @@
+                   Teradata SQL Plus project
+
+1. Introduction
+
+2. Prerequisite packages
+   ncurses library (Usually ncurses-devel is needed)
+
+3. Build from source
+   "make": build tsql+ with MySQL and PostgreSQL support
+   "make mysql=no": build tsql+ without MySQL support
+   "make postgresql=no": build tsql+ without PostgreSQL support
+   "make odbc=no": build tsql+ without ODBC support

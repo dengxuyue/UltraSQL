@@ -18,7 +18,8 @@ autom4te.cache/
 /bin/cunit/
 /bin/readline/
 /bin/yaml/
-/src/tsql+
+/src/usql
+/src/env_macro
 /src/parser/scan.h
 /src/parser/scan.c
 /src/parser/gram.h

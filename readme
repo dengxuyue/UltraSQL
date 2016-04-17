@@ -1,0 +1,19 @@
+        Read me first!
+
+0. Motivation
+    The target binary 'usql' will provide a unified interactive tool which
+    communicating with various kinds of RDBMS.
+
+1. Introduction    
+   The following RDBMS productions are supported:
+   *) Teradata
+   *) MySQL
+   *) PostgreSQL
+
+
+2. Directories
+    bin :
+    doc : documentation directory
+    ext : extenral libraries
+    src : source code directory
+    test:

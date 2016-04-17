@@ -1,0 +1,36 @@
+0. Expand tabs always, and the tab width is set to 4.
+
+1. The words are separated by underscore, i.e. "_" 
+
+2. Abbreviation rule
+	1) don't abbreviate unless it's really necessary
+	2) use the first 3/4 character for abbreviation
+
+3. Function declaration/definition and invocation 
+	1) there is a space between the last character of function name and the left parenthese
+	when we declare a function or define a function. For example: 
+		int this_is_a_func (int arg);
+	2) there is no space between them when the function is called. For example,
+		(void)this_is_a_func(1);
+
+4. Function return value
+	The rule stated below is from "LINUX/Documentation/Code_Style". 
+		If the name of a function is an action or an imperative command,
+		the function should return an error-code integer(-Exxx = failure, 
+		0 = success).  If the name is a predicate, the function should 
+		return a "succeeded" boolean(0 = failure, non-zero = success).
+
+5. Function implementations should be separated by TWO blank lines, and the open/end
+   curly-bracket for the function defition should be in its own line.
+   In the function implementation, there can be one blank line to separate code blocks,
+   but there should never be any two blank lines.
+
+6. There are spaces before and behind a keyword or an operator. 
+   There is no following space to the left parenthese, i.e. "(", neither the leading
+   space to the right parenthese, i.e. ")". In fact this rule is consistent with Rule.3
+
+7. Don't inline C source file, unless it's really necessary.
+   The "make" cannot detect the modifications of the inlined/included C source file,
+   and the inlined source file can increase the difficulties of program maintenace.
+
+8. More later...

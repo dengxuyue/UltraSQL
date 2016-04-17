@@ -1,0 +1,57 @@
+                             Bugs and the fixes
+                                -- Bugs are NOT the features should present. They're just bugs.
+
+1. There may be multiple title parcels.
+   -- Fixed(?).
+
+2. Multi-line statement are not correctly formatted, the next line is closely appened to the 
+   previous line.
+   -- Fixed.
+
+3. If a lot of rows/columns are returned, the latter part cannot show.
+   -- Fixed.
+
+4. If a huge result set is returned but not shown totally, it takes a long time to iterate on
+   remaining rows/columns.
+   -- Fixed.
+
+5. Clear text password.
+   -- Fixed.
+
+6. Error in parsing .logon: if the first .logon statement executions fails, the subsequent .logon
+   statement will get false "syntax error".
+
+7. Create/replace procedure with specified delimiter returns the syntax error 3706
+   -- parser should be able to recognize the 'create/replace procedure' type statement
+   -- set up APH, the extension area for procedure processing
+   -- TODO
+
+8. The following script works improperly:
+   
+        --------------------BEGIN----------------------------------------
+        del database test99;
+        drop database test99;
+
+        create database test99 as perm = 10e6;
+        grant all on test99 to dbc;
+
+        database test99;
+
+        create table t01(
+            t char(8),
+            i integer format 'FN9'
+        );
+
+        insert into t01('first', 1);
+        insert into t01('second', 2);
+
+        select t from t01;
+        select i from t01; --- zeros return
+        select * from t01; --- db crashes
+        --------------------END------------------------------------------
+    
+    -- Fixed
+
+9. Failure 3115 when query is running against a table with long varchar (e.g. 64000) 
+   type column.
+

@@ -1,0 +1,71 @@
+               Teradata SQL Plus User Guide
+
+1. Introduction
+    
+    "tsql+" is the delivered binary, and the abbreviation of 'Teradata SQL Plus'.
+
+2. Command Line Arguments
+
+  2.1 Multi Session Mode
+    If multi session mode is enabled, tsql+ permits the user to start multiple 
+    sessions to connect to database. For example, one session to Teradata database,
+    one session to PostgreSQL database, etc.
+
+    Multi session mode can be enabled by the command line argument 
+    "-m" or "--multi-session".
+
+  2.2 Debug Mode and Trace Level
+    If debug mode is enabled, tsql+ will write out the execution details to the
+    trace file, i.e. /tmp/tsql.trace.{login} ({login} is the OS login accout of
+    the user).
+
+    Debug mode can be enabled by the command line argument
+    "-d #L" or "--debug #L". 
+    The trace level #L can be provided or omitted. If omitted, the default trace 
+    level 1 is applied.
+
+    Trace Level 1: funtion call trace
+    Trace Level 2: Level 1 + execution detail
+
+
+3. Logon, Logoff and Quit
+
+  3.1 Logon
+    The synatx is ".logon [PROTOCAL://]HOSTNAME[:PORT]/USER[@DATABASE],PASSWORD"
+    The mandatory arguments
+    - HOSTNAME
+    - USER
+    - PASSWORD
+    The optional arguments
+    - PROTOCAL
+    The supported protocal includes:
+    * cliv2 (And this is the default protocal)
+    * pq
+    * mysql
+    * odbc
+    - PORT
+    - DATABASE
+
+    Examples: 
+    ".logon localhost/dbc,dbc"
+    ".logon pq://localhost:5455/dbc,dbc"
+      -- For 'PostgreSQL', the port is specified
+    ".logon pq://localhost/dbc@universal_schema,dbc"
+      -- For 'PostgreSQL', the database is specified
+    ".logon mysql://qh0004:5455/dbc@universal_schema,dbc"
+      -- For 'MySQL', the port/database is specified
+ 
+  3.2 Logoff
+
+  3.3 Quit
+
+4. Dot Directives
+
+5. SQL Request
+
+6. Debug Facility
+
+7. Miscellaneous
+
+8. Remarks
+
