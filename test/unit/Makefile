@@ -1,9 +1,10 @@
 
-PQ_HOME=$(HOME)/local/pgsql90/latest
+PQ_HOME=$(HOME)/local/pgsql/9.5/
 export PQ_HOME
 
 TOP_DIR=../..
-SUB_TEST=parser_miniparser interface_tdcli interface_pqlib interface_odbc util_ext_lib util_passwd
+#SUB_TEST=parser_miniparser interface_tdcli interface_pqlib interface_odbc util_ext_lib util_passwd
+SUB_TEST=parser_miniparser interface_pqlib interface_odbc util_ext_lib util_passwd
 
 parser_miniparser_dir=parser/miniparser
 interface_tdcli_dir  =interface/tdcli

@@ -1,7 +1,7 @@
 
 C_FLAG+=-D_DEBUG_ON_
-I_FLAG+=-I$(TOP_DIR)/bin/cunit/include -I$(TOP_DIR)/src
-L_FLAG+=-L$(TOP_DIR)/bin/cunit/lib -lcunit
+I_FLAG+= -I$(TOP_DIR)/src
+L_FLAG+= -lcunit
 
 #---------------------------special rules----------------------------
 #
