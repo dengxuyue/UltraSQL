@@ -14,4 +14,4 @@ $(E_OBJ): $(O_OBJ)
 
 test:
 	@echo "### running $(E_OBJ)"
-	@export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(TOP_DIR)/bin/cunit/lib && ./$(E_OBJ)
+	@./$(E_OBJ)
