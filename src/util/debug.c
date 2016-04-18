@@ -21,9 +21,9 @@ int init_trace()
 
     char def_trace[32];
     char* login = getlogin();
-    snprintf(def_trace, 31, "/tmp/tsql.trace.%s", (login ? login : "me") ); 
+    snprintf(def_trace, 31, "/tmp/usql.trace.%s", (login ? login : "me") );
 
-	char* penv = getenv("TSQL_TRACE");
+	char* penv = getenv("USQL_TRACE");
 
 	char* pfn;
 	if(penv) 

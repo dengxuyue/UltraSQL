@@ -90,6 +90,7 @@ DIDENT: IDENT | IDENT '.' IDENT
 
 simple_words: DIDENT
     | DIDENT words
+    | '(' ')'
     | '(' words ')'
     ;
 

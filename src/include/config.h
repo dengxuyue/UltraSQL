@@ -12,8 +12,8 @@
 
 #define HISTORY_PATH_LENGTH  64
 #define HISTORY_ENTRY_LIMIT  128
-#define TSQL_HISTORY ".tsql_history"
-#define TSQL_PROFILE ".tsql_profile"
+#define USQL_HISTORY ".usql_history"
+#define USQL_PROFILE ".usql_profile"
 
 #define PROFILE_LINE_LENGTH   128
 #define PASSWORD_ENTRY_LIMIT  32

@@ -67,11 +67,11 @@ int init_profile ()
 {
     struct passwd *pw = getpwuid(getuid());
     const char *homedir = pw->pw_dir;
-    char tsql_profile[128];
-    sprintf(tsql_profile, "%s/%s", pw->pw_dir, TSQL_PROFILE);
+    char usql_profile[128];
+    sprintf(usql_profile, "%s/%s", pw->pw_dir, USQL_PROFILE);
 
     FILE * pf;
-    if(!(pf = fopen(tsql_profile, "r")))
+    if(!(pf = fopen(usql_profile, "r")))
         return 1;
 
     int line_len, max_len;
@@ -112,11 +112,11 @@ int init_profile ()
     return 0;
 
 errout:
-    /* getline clears buffer tsql_profile */
-    sprintf(tsql_profile, "%s/%s", pw->pw_dir, TSQL_PROFILE); 
+    /* getline clears buffer usql_profile */
+    sprintf(usql_profile, "%s/%s", pw->pw_dir, USQL_PROFILE);
     if(!line)
         free(line);
-    fprintf(stderr, "Syntax error in Line %d of %s.\n", line_no, tsql_profile);
+    fprintf(stderr, "Syntax error in Line %d of %s.\n", line_no, usql_profile);
     fclose(pf);
     return -1;
 }

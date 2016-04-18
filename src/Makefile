@@ -67,7 +67,7 @@ clean: sub_clean
 sub_clean: $(addsuffix _clean,$(SUB_DIR))
 
 env_macro: Makefile
-	@echo "LD_LIBRARY_PATH=\044LD_LIBRARY_PATH:$(PQ_HOME)/lib:$(MY_HOME)/lib" > env_macro
+	@echo "export LD_LIBRARY_PATH=\044LD_LIBRARY_PATH:$(PQ_HOME)/lib:$(MY_HOME)/lib" > env_macro
 
 $(E_OBJ): $(O_OBJ) $(SUB_O_OBJ)
 	@echo "[LD] $@"

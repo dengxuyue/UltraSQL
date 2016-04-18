@@ -156,7 +156,7 @@ int main (int argc, char** argv)
     get_option(argc, argv);
 
     fprintf(stdout, "        |-----------------------|\n");
-    fprintf(stdout, "        | Teradata SQL Plus 0.1 |\n");
+    fprintf(stdout, "        |      UltraSQL 0.2     |\n");
     if (trace_level)
     fprintf(stdout, "        | ::Trace Level (%d)     |\n", trace_level);
     fprintf(stdout, "        |-----------------------|\n\n");
