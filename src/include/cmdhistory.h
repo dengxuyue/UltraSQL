@@ -1,5 +1,5 @@
-#ifndef _EXT_LIB_H_
-#define _EXT_LIB_H_
+#ifndef _CMD_HISTORY_H_
+#define _CMD_HISTORY_H_
 
 #include "config.h"
 #include <stdio.h>
@@ -8,4 +8,4 @@
 int  init_history();
 void fini_history();
 
-#endif /*_EXT_LIB_H_*/
+#endif /*_CMD_HISTORY_H_*/

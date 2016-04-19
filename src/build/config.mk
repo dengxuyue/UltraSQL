@@ -20,7 +20,7 @@ ifeq ($(POSTGRESQL_SUPPORT),yes)
 C_FLAG+= -DPOSTGRESQL_SUPPORT
 endif
 
-I_FLAG+= -I$(SRC_DIR)/include -I$(TOP_DIR)/bin/readline/include
+I_FLAG+= -I$(SRC_DIR)/include
 L_FLAG+=
 
 X_OBJ=

@@ -1,4 +1,4 @@
-#include "ext_lib.h"
+#include "cmdhistory.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>

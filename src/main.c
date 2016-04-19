@@ -8,7 +8,7 @@
 #include "debug.h"
 #include "miniparser.h"
 #include "dbi.h"
-#include "ext_lib.h"
+#include "cmdhistory.h"
 #include "profile.h"
 #include "helper.h"
 

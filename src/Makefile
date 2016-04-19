@@ -31,14 +31,14 @@ C_SRC=main.c
 SUB_C_SRC=interface/dbi.c \
           parser/dots.c parser/coarse.c parser/miniparser.c parser/gram.c parser/ptree.c \
           response/parcels.c response/pager.c response/myresult.c response/export.c \
-          util/debug.c util/ext_lib.c util/passwd.c util/profile.c util/setting.c util/helper.c 
+          util/debug.c util/cmdhistory.c util/passwd.c util/profile.c util/setting.c util/helper.c 
 
 SUB_DIR=parser interface response util
 E_OBJ=usql
 
 include $(SRC_DIR)/build/config.mk
 
-L_FLAG+=-lncurses -Wl,-Bstatic -L$(TOP_DIR)/bin/readline/lib -lreadline -lhistory -Wl,-Bdynamic 
+L_FLAG+=-lncurses -lreadline -lhistory
 
 ifeq ($(MYSQL_SUPPORT),yes)
 SUB_C_SRC+= interface/myclient.c response/myresult.c 
