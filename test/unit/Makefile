@@ -3,14 +3,14 @@ PQ_HOME=$(HOME)/local/pgsql/9.5/
 export PQ_HOME
 
 TOP_DIR=../..
-#SUB_TEST=parser_miniparser interface_tdcli interface_pqlib interface_odbc util_ext_lib util_passwd
-SUB_TEST=parser_miniparser interface_pqlib interface_odbc util_ext_lib util_passwd
+#SUB_TEST=parser_miniparser interface_tdcli interface_pqlib interface_odbc util_cmdhistory util_passwd
+SUB_TEST=parser_miniparser interface_pqlib interface_odbc util_cmdhistory util_passwd
 
 parser_miniparser_dir=parser/miniparser
 interface_tdcli_dir  =interface/tdcli
 interface_pqlib_dir  =interface/pqlib
-interface_odbc_dir  =interface/odbc
-util_ext_lib_dir     =util/ext_lib
+interface_odbc_dir   =interface/odbc
+util_cmdhistory_dir  =util/cmdhistory
 util_passwd_dir      =util/passwd
 
 all: sub_all

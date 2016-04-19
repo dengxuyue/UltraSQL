@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "CUnit/Basic.h"
-#include "util/ext_lib.c"
+#include "util/cmdhistory.c"
 
 int init_suite1(void)
 {
