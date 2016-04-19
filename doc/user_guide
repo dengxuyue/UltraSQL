@@ -1,28 +1,28 @@
-               Teradata SQL Plus User Guide
+                   UltraSQL User Guide
 
 1. Introduction
     
-    "tsql+" is the delivered binary, and the abbreviation of 'Teradata SQL Plus'.
+    "usql" is the delivered binary, and the abbreviation of 'UltraSQL'.
 
 2. Command Line Arguments
 
   2.1 Multi Session Mode
-    If multi session mode is enabled, tsql+ permits the user to start multiple 
-    sessions to connect to database. For example, one session to Teradata database,
-    one session to PostgreSQL database, etc.
+    If multi session mode is enabled, usql permits the user to start multiple
+    sessions to connect to database. For example, one session to Teradata 
+    database, one session to PostgreSQL database, etc.
 
     Multi session mode can be enabled by the command line argument 
     "-m" or "--multi-session".
 
   2.2 Debug Mode and Trace Level
-    If debug mode is enabled, tsql+ will write out the execution details to the
-    trace file, i.e. /tmp/tsql.trace.{login} ({login} is the OS login accout of
-    the user).
+    If debug mode is enabled, usql will write out the execution details to the
+    trace file, i.e. /tmp/usql.trace.{login} ({login} is the OS login accout
+    of the user).
 
     Debug mode can be enabled by the command line argument
     "-d #L" or "--debug #L". 
-    The trace level #L can be provided or omitted. If omitted, the default trace 
-    level 1 is applied.
+    The trace level #L can be provided or omitted. If omitted, the default 
+    trace level 1 is applied.
 
     Trace Level 1: funtion call trace
     Trace Level 2: Level 1 + execution detail
@@ -56,10 +56,45 @@
       -- For 'MySQL', the port/database is specified
  
   3.2 Logoff
+    The syntax is '.logoff'.
 
   3.3 Quit
+    The syntax is '.quit'; It will effectively log off if it has not yet.
 
 4. Dot Directives
+  4.1 set width 
+    Command: .set width ###
+    Synopsis: set the display width for result set, or each row length.
+
+  4.2 set delimiter 
+    Command: .set delimiter CHARACTERS 
+    Synopsis: Usually a SQL request is ended by a semicolon ';' (which may
+        follow one or more spaces) and an ending carriage 'n'. If such
+        semicolon in the line ending position bring premature request ending,
+        you need a special request delimiter. For example: you can set request
+        delimiter to '$$' by '.set delimiter $$', then the following two SQL
+        statements will for a multi-statement request:
+        "select * from tab_1;
+         select * from tab_2;
+         $$"
+
+  4.3 set sqlsyntax 
+    Command: .set sqlsyntax [on|off]
+    Synopsis: set delimiter character strings
+
+  4.4 set sqlcompliance 
+    Command: .set sqlcompliance [ansi|teradata|postgresql|mysql]
+    Synopsis: set sql compliance, or dialect in session. The supported
+        dialects include ANSI, Teradata, MySQL and PostgreSQL.
+
+  4.5 show one or all sessions
+    Command: .session show [all|alias#]
+    Synopsis: Show all sessions, specified session through alias or 
+        current active session;
+
+  4.6) select one working session in multi-session mode
+    Command: .session select alias#
+    Synopsis:
 
 5. SQL Request
 
