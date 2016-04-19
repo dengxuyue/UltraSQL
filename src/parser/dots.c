@@ -179,7 +179,7 @@ int parse_logon (char* text, valid_request* req)
     req->node.logon.port[0]       = '\0';
     req->node.logon.dbname[0]     = '\0';
     req->node.logon.protocal      = 0;
-    strcpy(protocal, "cliv2");
+    strcpy(protocal, "pq");
 
     int len = strlen(text);
     int start, end, i = 0;

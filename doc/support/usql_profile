@@ -1,10 +1,7 @@
 [password]
 localhost|dbc|dbc
-decosut|dbc|dbc
-qh0003|dbc|dbc
+localhost|test|test
 qh0004|dbc|dbc
-qh0008|dbc|dbc
-qh0009|dbc|dbc
 
 [setting]
 .set sqlsyntax off

@@ -38,11 +38,11 @@
     - PASSWORD
     The optional arguments
     - PROTOCAL
-    The supported protocal includes:
-    * cliv2 (And this is the default protocal)
-    * pq
-    * mysql
-    * odbc
+      The supported protocal includes:
+      * pq (And this is the default protocal)
+      * mysql
+      * cliv2 
+      * odbc
     - PORT
     - DATABASE
 

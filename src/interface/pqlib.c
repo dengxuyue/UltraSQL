@@ -66,10 +66,34 @@ int pq_connect (pq_session* sess, char* conninfo, int infolen)
     PGconn* conn = PQconnectdb(conninfo);
     if(!conn)
         return -1;
-
     sess->connection = conn;
 
-    return 0;
+    int status_OK = 0;
+    int retries   = 0;
+    while (retries < 12 && !status_OK) {
+        if (retries) {
+        /* waiting for 5 seconds if connection is neither bad nor OK */
+            if(DEBUG_ON & 0xF0)
+                printf("Waiting for connection is made ...\n");
+            sleep(5);
+        }
+
+        switch (PQstatus(conn)) {
+        case CONNECTION_OK:
+            status_OK = 1;
+            break;
+        case CONNECTION_BAD:
+            status_OK = -1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (status_OK == 1)
+        return 0;
+
+    return 1;
 }
 
 
