@@ -20,9 +20,8 @@ mini_dots_t mini_dots_list[] = {
    ,{"session", 7, DTD_SESSION}
 };
 
-static int internal_sqlsyntax_on  = 1;
-static int internal_sqlcompliance = SQL_COMPLIANCE_DEFAULT;
-
+static int  internal_sqlsyntax_on  = 1;
+static int  internal_sqlcompliance = SQL_COMPLIANCE_DEFAULT;
 
 int init_parser ()
 {

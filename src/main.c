@@ -137,6 +137,12 @@ int exec_dot_set (valid_request * req, int quiet)
             fprintf(stdout, "-*- You have set sql compliance.\n\n");
         break;
 
+    case DTD_SET_PROTOCAL:
+        set_parser_protocal(req->node.set.value.protocal);
+        if (!quiet)
+            fprintf(stdout, "-*- You have set connectivity protocal.\n\n");
+        break;
+
     default:
         fprintf(stderr, "-!- You have input an unknown command.\n\n");
         break;
@@ -168,6 +174,9 @@ int main (int argc, char** argv)
     };
 
     dbi_preinit_all();
+    {
+        set_parser_protocal("pq");
+    }
 
     init_trace();
     init_history();

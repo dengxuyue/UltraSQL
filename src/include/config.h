@@ -4,7 +4,7 @@
 /**
 #define MYSQL_SUPPORT      1
 #define POSTGRESQL_SUPPORT 1
- */
+*/
 
 #define DEBUG_ON 0
 

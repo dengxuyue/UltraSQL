@@ -29,5 +29,4 @@ int  parse        (char* text, valid_request *req);
 
 int  free_request (valid_request *req);
 
-
 #endif /*_MINIPARSER_H_*/

@@ -87,12 +87,18 @@
     Synopsis: set sql compliance, or dialect in session. The supported
         dialects include ANSI, Teradata, MySQL and PostgreSQL.
 
-  4.5 show one or all sessions
+  4.5 set connectivity protocal 
+    Command: .set protocal [cliv2|odbc|pq|mysql]
+    Synopsis: set connectivity protocal. The supported
+        dialects include cliv2 (for Teradata), odbc, pq, and mysql.
+        The default option is pq for PostgreSQL.
+
+  4.6 show one or all sessions
     Command: .session show [all|alias#]
     Synopsis: Show all sessions, specified session through alias or 
         current active session;
 
-  4.6) select one working session in multi-session mode
+  4.7) select one working session in multi-session mode
     Command: .session select alias#
     Synopsis:
 

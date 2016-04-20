@@ -25,10 +25,9 @@
     2.1) .set delimiter
     2.2) .set sqlsyntax [on|off] 
     2.3) .set sqlcompliance [ansi|teradata|postgresql] 
-    2.4) .session show [all|alias#]
-         Show all sessions, specified session through alias or current active session;
-    2.5) .session select alias#
-         Select specific sesion as the current active session
+    2.4) .set protocal [cliv2|odbc|pq|mysql] 
+    2.5) .session show [all|alias#]
+    2.6) .session select alias#
 
 3. Multi-session mode
    Enabl multi-session mode by passing '-m' or '--multi-session'

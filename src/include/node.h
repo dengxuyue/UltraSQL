@@ -20,7 +20,7 @@ typedef struct set_node_t {
         char delimiter[SET_DELIMITER_LENGTH];
         int  sqlsyntax; /* 0: off; 1: on */
         int  sqlcompliance;
-        int  dbi;
+        char protocal[LOGON_PROTOCAL_LENGTH];
     } value;
 } set_node;
 
@@ -43,6 +43,8 @@ typedef struct valid_request_t {
     } node;
 } valid_request;
 
+void set_parser_protocal (char* protoc);
+
 #define DOT_DIRECTIVE 101
 #define SQL_STATEMENT 102
 #define END_DELIMITER 103
@@ -56,6 +58,7 @@ typedef struct valid_request_t {
 #define DTD_SET_DELIMITER      10142
 #define DTD_SET_SQLSYNTAX      10143
 #define DTD_SET_SQLCOMPLIANCE  10144
+#define DTD_SET_PROTOCAL       10145
 
 #define DTD_SESSION            1015
 #define DTD_SESSION_SHOW       10151

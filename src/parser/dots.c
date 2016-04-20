@@ -8,6 +8,7 @@ mini_dots_t set_dots_list[] = {
    ,{"delimiter",      9, DTD_SET_DELIMITER}
    ,{"sqlsyntax",      9, DTD_SET_SQLSYNTAX}
    ,{"sqlcompliance", 13, DTD_SET_SQLCOMPLIANCE}
+   ,{"protocal",       8, DTD_SET_PROTOCAL}
 };
 
 mini_dots_t sql_compliance_list[] = {
@@ -28,6 +29,18 @@ mini_dots_t dbi_protocal_list[] = {
    ,{"pq",          2, DBI_PROTOCAL_POSTGRESQL}
    ,{"mysql",       5, DBI_PROTOCAL_MYSQL}
 };
+
+
+char internal_protocal[LOGON_PROTOCAL_LENGTH];
+
+
+void set_parser_protocal (char* protoc)
+{
+    int len = strlen(protoc);
+    if (len) 
+        strncpy(internal_protocal, protoc, len);
+    internal_protocal[len] = '\0';
+}
 
 
 int parse_set (char* text, valid_request* req)
@@ -153,6 +166,40 @@ int parse_set (char* text, valid_request* req)
         MINIPARSER_DEBUG("set-sqlcompliance: %d", req->node.set.value.sqlcompliance);
         return 0;
     }
+    else if(req->node.set.type == DTD_SET_PROTOCAL) {
+        int len;
+        while(*pn++ != '\0') 
+            /*leave out space*/
+            if (!(*pn == ' ' || *pn == '\t'))
+                break;
+
+        len = 0;
+        while(len < 10) { /* cliv2/odbc/pq/mysql */
+            if (!((*(pn + len) >= 'a' && *(pn + len) <= 'z') ||
+                  (*(pn + len) >= 'A' && *(pn + len) <= 'Z') ||
+                  (*(pn + len) >= '0' && *(pn + len) <= '9')))
+                break;
+            len++;
+        }
+
+        int k, llen = 0, found = 0;
+        int list_size = sizeof(dbi_protocal_list)/sizeof(dbi_protocal_list[0]);
+        for(k = 0; k < list_size; k++) {
+            llen = len;
+            if (dbi_protocal_list[k].length < llen) 
+                llen = dbi_protocal_list[k].length;
+            if(!strncasecmp(pn, dbi_protocal_list[k].name, llen)) {
+                if (llen) {
+                    found = 1;
+                    MINIPARSER_DEBUG("Get valid protocal '%s'", pn);
+                    strncpy(req->node.set.value.protocal, pn, llen);
+                }
+            }
+        }
+
+        if (found)
+            return 0;
+    }
 
     return 1;
 }
@@ -173,13 +220,14 @@ int parse_logon (char* text, valid_request* req)
      */
 
     char protocal[LOGON_PROTOCAL_LENGTH];
+    strcpy(protocal, internal_protocal);
+
     req->node.logon.datasource[0] = '\0';
     req->node.logon.username[0]   = '\0';
     req->node.logon.password[0]   = '\0';
     req->node.logon.port[0]       = '\0';
     req->node.logon.dbname[0]     = '\0';
     req->node.logon.protocal      = 0;
-    strcpy(protocal, "pq");
 
     int len = strlen(text);
     int start, end, i = 0;
@@ -219,8 +267,9 @@ int parse_logon (char* text, valid_request* req)
         if ( i + 1 < len && *(text + i + 1) == '/' &&
              i + 2 < len && *(text + i + 2) == '/' ) 
             flag = 1; /*procotal*/
-        else if (*(text + i) >= '0' && *(text + i) <= '9')
-            flag = 2;
+        else if (i + 1 < len && *(text + i + 1) >= '0' && *(text + i + 1) <= '9' &&
+                 i + 2 < len && *(text + i + 2) >= '0' && *(text + i + 2) <= '9' )
+            flag = 2; /* datasource and port, e.g. hostname:99 */
         else  {
             fprintf(stderr, "syntax error: protocal/datasource is ill-formated.");
             return 1;
