@@ -30,7 +30,7 @@ SRC_DIR=.
 C_SRC=main.c
 SUB_C_SRC=interface/dbi.c \
           parser/dots.c parser/coarse.c parser/miniparser.c parser/gram.c parser/ptree.c \
-          response/parcels.c response/pager.c response/myresult.c response/export.c \
+          response/parcels.c response/pager.c response/myresult.c response/pqtuples.c response/export.c \
           util/debug.c util/cmdhistory.c util/passwd.c util/profile.c util/setting.c util/helper.c 
 
 SUB_DIR=parser interface response util

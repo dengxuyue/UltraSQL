@@ -1,3 +1,9 @@
+/*
+ * summary: display module for output from Teradata
+ *
+ * Status:
+ *    'sidetitles on' feature (pending, no avalable DBS)
+ */
 #include "parcels.h"
 #include "pager.h"
 #include "helper.h"
@@ -21,7 +27,7 @@ static int internal_quiescent_mode = 0;
 /* how many character has been printed in current row */
 static int internal_row_width = 0;
 
-/* the index of title/format/data column in response */ 
+/* the index of title/format/data column in response */
 static int title_col_index = -1;
 static int data_col_index = -1;
 
@@ -75,17 +81,17 @@ void reset_resp_buffer (int col_count)
 
     if (col_resp_headline.col_count > BUFFER_HEADLINE_BLOCK)
         free(col_resp_headline.col_length);
-    if (col_count > BUFFER_HEADLINE_BLOCK) 
+    if (col_count > BUFFER_HEADLINE_BLOCK)
         col_resp_headline.col_length = (int*)malloc(col_count * sizeof(int));
-    else if (col_count > 0) 
+    else if (col_count > 0)
         col_resp_headline.col_length = col_resp_headline.block;
 
     if (col_count > 0) {
         col_resp_headline.col_count = col_count;
-        for (i = 0; i < col_count; i++) 
+        for (i = 0; i < col_count; i++)
             col_resp_headline.col_length[i] = 0;
     }
-    else 
+    else
         col_resp_headline.col_count = 0;
 
     col_resp_headline.col_index = 0;
@@ -104,16 +110,16 @@ void fini_resp_buffer()
 
 int add_resp_buffer(int type, int datatype, int length, void* column)
 {
-    if (!(type == RESPONSE_TITLE || 
-          type == RESPONSE_FORMAT || 
-          type == RESPONSE_RECEND || 
+    if (!(type == RESPONSE_TITLE ||
+          type == RESPONSE_FORMAT ||
+          type == RESPONSE_RECEND ||
           type == RESPONSE_DATA))
         return -1;
 
     int flush_retval;
-    if(last_col_resp == BUFFER_PARCELS_LIMIT) 
+    if(last_col_resp == BUFFER_PARCELS_LIMIT)
         /* set last_col_resp = 0 in 'flush_resp_buffer'; */
-        flush_retval = flush_resp_buffer(); 
+        flush_retval = flush_resp_buffer();
     if (flush_retval == -1)
         return -1;
 
@@ -133,7 +139,7 @@ int add_resp_buffer(int type, int datatype, int length, void* column)
             col_resp_headline.col_length[title_col_index] = length;
         title_col_index++;
 
-        if (length > BUFFER_PARCEL_BLOCK) { 
+        if (length > BUFFER_PARCEL_BLOCK) {
             col->column.title = (char*)malloc(length);
             memcpy(col->column.title, column, length);
         }
@@ -143,7 +149,7 @@ int add_resp_buffer(int type, int datatype, int length, void* column)
         }
     }
     else if (type == RESPONSE_FORMAT) {
-        if (length > BUFFER_PARCEL_BLOCK) { 
+        if (length > BUFFER_PARCEL_BLOCK) {
             col->column.format = (char*)malloc(length);
             memcpy(col->column.format, column, length);
         }
@@ -161,12 +167,12 @@ int add_resp_buffer(int type, int datatype, int length, void* column)
         if (col_resp_headline.col_length[data_col_index] < length)
             col_resp_headline.col_length[data_col_index] = length;
         data_col_index++;
-   
+
         data_in_resp_list = 1;
-            
-        if (length > BUFFER_PARCEL_BLOCK) { 
+
+        if (length > BUFFER_PARCEL_BLOCK) {
             col->column.data = (char*)malloc(length);
-            if (col->column.data) 
+            if (col->column.data)
                 memcpy(col->column.data, column, length);
             else {
                 if(DEBUG_ON & 0xF0)
@@ -188,9 +194,9 @@ int add_resp_buffer(int type, int datatype, int length, void* column)
 }
 
 
-static inline void internal_printf (FILE* pf, char ch, int datatype) 
+static inline void internal_printf (FILE* pf, char ch, int datatype)
 {
-    if (ch == '\r') 
+    if (ch == '\r')
         ch = '\n';
     if (!internal_quiescent_mode && data_in_resp_list)
         fprintf(pf, "%c", ch);
@@ -205,10 +211,12 @@ static inline void internal_printf (FILE* pf, char ch, int datatype)
  *               1 indicates there is nothing to show
  *
  * Note that the "Format" parcel does show itself, but the "---" separator line
+ *
+ * TODO: to provide 'sidetitles on' feature
  */
 int flush_resp_buffer()
 {
-    if(!col_resp_list) 
+    if(!col_resp_list)
         return 1;
 
     if(last_col_resp == 0 && col_resp_list[0].type == 0)
@@ -226,7 +234,7 @@ int flush_resp_buffer()
 
         if (ptr->type == RESPONSE_TITLE || ptr->type == RESPONSE_FORMAT || ptr->type == RESPONSE_DATA) {
             eff_length = col_resp_headline.col_length[col_resp_headline.col_index];
-            if (++col_resp_headline.col_index >= col_resp_headline.col_count) 
+            if (++col_resp_headline.col_index >= col_resp_headline.col_count)
                 col_resp_headline.col_index = 0;
         }
 
@@ -239,9 +247,9 @@ int flush_resp_buffer()
         }
 
         if (ptr->type == RESPONSE_TITLE) {
-            if (internal_row_width < output_screen_width && multi_col_title++) 
+            if (internal_row_width < output_screen_width && multi_col_title++)
                 internal_printf(fout, '|', 0);
-            for(j = 0; internal_row_width < output_screen_width && j < ptr->length; internal_row_width++, j++) 
+            for(j = 0; internal_row_width < output_screen_width && j < ptr->length; internal_row_width++, j++)
                 internal_printf(fout, ptr->column.title[j], 0);
             /* pad the title with space */
             for(j = 0; internal_row_width < output_screen_width && j < eff_length - ptr->length; j++, internal_row_width++)
@@ -251,7 +259,7 @@ int flush_resp_buffer()
                 free(ptr->column.title);
         }
         else if (ptr->type == RESPONSE_FORMAT) {
-            if (internal_row_width < output_screen_width && multi_col_format++) 
+            if (internal_row_width < output_screen_width && multi_col_format++)
                 internal_printf(fout, '+', 0);
             for(j = 0; internal_row_width < output_screen_width && j < eff_length; internal_row_width++, j++)
                 internal_printf(fout, '-', 0);
@@ -259,9 +267,9 @@ int flush_resp_buffer()
                 free(ptr->column.format);
         }
         else if (ptr->type == RESPONSE_DATA) {
-            if (internal_row_width < output_screen_width && multi_col_data++) 
+            if (internal_row_width < output_screen_width && multi_col_data++)
                 internal_printf(fout, '|', 0);
-            for(j = 0; internal_row_width < output_screen_width && j < ptr->length; internal_row_width++, j++) 
+            for(j = 0; internal_row_width < output_screen_width && j < ptr->length; internal_row_width++, j++)
                 internal_printf(fout, ptr->column.data[j], ptr->datatype);
             /* pad the data with space */
             for(j = 0; internal_row_width < output_screen_width && j < eff_length - ptr->length; j++, internal_row_width++)

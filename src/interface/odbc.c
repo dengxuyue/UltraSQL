@@ -227,7 +227,7 @@ int odbc_fetch (odbc_session *sess)
             if(IN_SCREEN(row_len)) {
                 /* we have an ending '\0' */
                 var_col_len = snprintf(row_buf + row_len, output_screen_width - row_len + 1, "%s", col_name);
-                if (var_col_len > output_screen_width - row_len) 
+                if (var_col_len > output_screen_width - row_len)
                     row_len = output_screen_width;
                 else
                     row_len += var_col_len;
@@ -287,7 +287,7 @@ int odbc_fetch (odbc_session *sess)
                 if (IN_SCREEN(row_len)) {
                     /* we have an ending '\0' */
                     var_col_len = snprintf(row_buf + row_len, output_screen_width - row_len + 1, "%s", buf);
-                    if (var_col_len > output_screen_width - row_len) 
+                    if (var_col_len > output_screen_width - row_len)
                         row_len = output_screen_width;
                     else
                         row_len += var_col_len;

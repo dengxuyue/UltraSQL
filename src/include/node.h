@@ -17,9 +17,10 @@ typedef struct set_node_t {
     int type;
     union {
         int  width;
-        char delimiter[SET_DELIMITER_LENGTH];
         int  sqlsyntax; /* 0: off; 1: on */
+        int  sidetitles; /* 0: off; 1: on */
         int  sqlcompliance;
+        char delimiter[SET_DELIMITER_LENGTH];
         char protocal[LOGON_PROTOCAL_LENGTH];
     } value;
 } set_node;
@@ -59,6 +60,7 @@ void set_parser_protocal (char* protoc);
 #define DTD_SET_SQLSYNTAX      10143
 #define DTD_SET_SQLCOMPLIANCE  10144
 #define DTD_SET_PROTOCAL       10145
+#define DTD_SET_SIDETITLES     10146
 
 #define DTD_SESSION            1015
 #define DTD_SESSION_SHOW       10151

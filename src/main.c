@@ -143,6 +143,13 @@ int exec_dot_set (valid_request * req, int quiet)
             fprintf(stdout, "-*- You have set connectivity protocal.\n\n");
         break;
 
+    case DTD_SET_SIDETITLES:
+        /* set_parser_protocal(req->node.set.value.sidetitles); */
+        if (!quiet)
+            fprintf(stdout, "-*- You have turn %s side titles.\n\n",
+                req->node.set.value.sidetitles ? "on" : "off");
+        break;
+
     default:
         fprintf(stderr, "-!- You have input an unknown command.\n\n");
         break;

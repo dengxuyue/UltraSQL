@@ -8,7 +8,7 @@
 #include <string.h>
 
 static int interrupt_mysql_fetching = 0;
-void mysql_inter_fetch (int signo) 
+void mysql_inter_fetch (int signo)
 {
     interrupt_mysql_fetching = 1;
 }
@@ -23,7 +23,7 @@ inline void mysql_write_error(MYSQL *conn)
 
 int mi_init (mi_session * sess)
 {
-    if (!sess) 
+    if (!sess)
         return -1;
 
     MYSQL *conn;
@@ -43,7 +43,7 @@ int mi_init (mi_session * sess)
 
 int mi_connect (mi_session* sess, char* conninfo, int infolen)
 {
-    if (!sess) 
+    if (!sess)
         return -1;
 
     INTERFACE_DEBUG("Connection info: %s", conninfo);
@@ -52,11 +52,11 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
     char username[LOGON_USERNAME_LENGTH];
     char password[LOGON_PASSWORD_LENGTH];
     char dbname[LOGON_DBNAME_LENGTH];
-    char port[8]; 
+    char port[8];
     char socket[LOGON_SOCKET_LENGTH];
 
     /* datasource */
-    int start, i; 
+    int start, i;
     int len   = strlen(conninfo);
     i         = 0;
     start     = 0;
@@ -66,7 +66,7 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
         i++;
     }
     snprintf(datasource, i - start + 1, conninfo + start);
-    datasource[i - start + 1] = '\0'; 
+    datasource[i - start + 1] = '\0';
     INTERFACE_DEBUG("Logon datasource: %s", datasource);
 
     /* username */
@@ -78,7 +78,7 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
         i++;
     }
     snprintf(username, i - start + 1, conninfo + start);
-    username[i - start + 1] = '\0'; 
+    username[i - start + 1] = '\0';
     INTERFACE_DEBUG("Logon username: %s", username);
 
     /* password */
@@ -92,7 +92,7 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
     }
     if (i > start) {
         snprintf(password, i - start + 1, conninfo + start);
-        password[i - start + 1] = '\0'; 
+        password[i - start + 1] = '\0';
         INTERFACE_DEBUG("Logon password: %s", password);
         eff_passwd = password;
     }
@@ -108,7 +108,7 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
     }
     if (i > start) {
         snprintf(dbname, i - start + 1, conninfo + start);
-        dbname[i - start + 1] = '\0'; 
+        dbname[i - start + 1] = '\0';
         INTERFACE_DEBUG("Logon dbname: %s", dbname);
         eff_db = dbname;
     }
@@ -124,13 +124,13 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
     }
     if (i > start) {
         snprintf(port, i - start + 1, conninfo + start);
-        port[i - start + 1] = '\0'; 
+        port[i - start + 1] = '\0';
         INTERFACE_DEBUG("Logon port: %s", port);
         eff_port = atoi(port);
     }
 
     sess->portal = 0;
-    if (mysql_real_connect(sess->connection, datasource, username, 
+    if (mysql_real_connect(sess->connection, datasource, username,
                            eff_passwd, eff_db, eff_port, NULL, 0))
         return 0;
 
@@ -140,7 +140,7 @@ int mi_connect (mi_session* sess, char* conninfo, int infolen)
 }
 
 
-int mi_execute (mi_session* sess, char* req) 
+int mi_execute (mi_session* sess, char* req)
 {
     if (!req || !sess || !sess->connection)
         return -1;
@@ -166,7 +166,7 @@ int mi_execute (mi_session* sess, char* req)
 
 int mi_fetch (mi_session* sess)
 {
-    if (!sess || !sess->connection || !sess->portal) 
+    if (!sess || !sess->connection || !sess->portal)
         return -1;
 
     MYSQL_FIELD *fields;
@@ -180,7 +180,7 @@ int mi_fetch (mi_session* sess)
         fprintf(stdout, "-!- Errors in retrieving the column names of the query result..\n");
     }
     for(i = 0; i < num_fields; i++) {
-        printf("%.*s", fields[i].name_length, fields[i].name); 
+        printf("%.*s", fields[i].name_length, fields[i].name);
     }
     printf("\n");
 
@@ -211,7 +211,7 @@ int mi_finish (mi_session* sess)
 
 int mi_end (mi_session* sess)
 {
-    if (sess) { 
+    if (sess) {
         mysql_close(sess->connection);
         sess->connection = 0;
     }

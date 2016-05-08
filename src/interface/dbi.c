@@ -47,13 +47,16 @@ static inline int session_type (int prot) {
 }
 
 
-int get_connection_info(char* conninfo, int infolen, logon_node* logon) 
+int get_connection_info(char* conninfo, int infolen, logon_node* logon)
 {
     if(!conninfo || !logon)
         return -1;
 
+    if ( 0 ) {
+        /* dummy branch to ensure 'else if' is syntax-correct */
+    }
 #ifdef TDCLI_SUPPORT
-    if (global_session_list[active_session_index].type == TDCLI_SESSION) {
+    else if (global_session_list[active_session_index].type == TDCLI_SESSION) {
         snprintf(conninfo, infolen, "%s/%s,%s",
                  logon->datasource,
                  logon->username,
@@ -104,16 +107,16 @@ int get_connection_info(char* conninfo, int infolen, logon_node* logon)
         ptr += nchar;
         infolen -= nchar;
 
-        if (strlen(logon->port)) 
+        if (strlen(logon->port))
             nchar = snprintf(ptr, infolen, ";%s", logon->port);
-        else 
+        else
             nchar = snprintf(ptr, 2, ";");
         ptr += nchar;
         infolen -= nchar;
 
-        if (strlen(logon->socket)) 
+        if (strlen(logon->socket))
             nchar = snprintf(ptr, infolen, ";%s", logon->socket);
-        else 
+        else
             nchar = snprintf(ptr, 2, ";");
         ptr += nchar;
         infolen -= nchar;
@@ -124,9 +127,9 @@ int get_connection_info(char* conninfo, int infolen, logon_node* logon)
         snprintf(conninfo, infolen, "DSN=%s;", logon->datasource);
     }
 
-    strncpy(global_session_list[active_session_index].conn_info, 
+    strncpy(global_session_list[active_session_index].conn_info,
             conninfo, CONN_INFO_STRING_LENGTH);
- 
+
     return 0;
 }
 
@@ -154,7 +157,7 @@ static void print_session_detail (int index)
 }
 
 
-void dbi_session_show (char* alias) 
+void dbi_session_show (char* alias)
 {
     int len = strlen(alias);
 
@@ -170,18 +173,18 @@ void dbi_session_show (char* alias)
     }
 
     int show_all = 0;
-    if(!strncasecmp(alias, "all", 3)) 
+    if(!strncasecmp(alias, "all", 3))
         show_all = 1;
-    
+
     int i, len2, show_any = 0;
     for (i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++) {
         if(global_session_list[i].type) {
             len2 = strlen(global_session_list[i].alias);
-            if(show_all || !strncasecmp(global_session_list[i].alias, 
-                                        alias, 
+            if(show_all || !strncasecmp(global_session_list[i].alias,
+                                        alias,
                                         len > len2 ? len : len2)) {
 
-                if (!show_any) 
+                if (!show_any)
                     fprintf(stdout, "-*- You want to show '%s' session details.\n\n", alias);
                 print_session_detail(i);
                 show_any = 1;
@@ -191,13 +194,13 @@ void dbi_session_show (char* alias)
         }
     }
 
-    if (!show_any) 
+    if (!show_any)
         fprintf(stdout, "-!- There is no such a '%s' session existing.\n\n", alias);
 
 }
 
 
-void dbi_session_select (char* alias) 
+void dbi_session_select (char* alias)
 {
     int len = strlen(alias);
     if (!len) {
@@ -213,7 +216,7 @@ void dbi_session_select (char* alias)
     for (i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++) {
         if(global_session_list[i].type) {
             len2 = strlen(global_session_list[i].alias);
-            if(!strncasecmp(global_session_list[i].alias, alias, 
+            if(!strncasecmp(global_session_list[i].alias, alias,
                             len > len2 ? len : len2)) {
                 fprintf(stdout, "-*- You have chosen '%s' as current active session.\n\n", alias);
                 active_session_index = i;
@@ -230,7 +233,7 @@ void dbi_session_select (char* alias)
 }
 
 
-void dbi_preinit_all () 
+void dbi_preinit_all ()
 {
     int i;
     for(i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++)
@@ -244,7 +247,7 @@ static void dbi_session_free(int index)
         return;
 
 #ifdef TDCLI_SUPPORT
-    if (global_session_list[index].type == TDCLI_SESSION) {
+    else if (global_session_list[index].type == TDCLI_SESSION) {
         free((td_session*)global_session_list[index].session);
     }
 #endif
@@ -253,12 +256,17 @@ static void dbi_session_free(int index)
         free((pq_session*)global_session_list[index].session);
     }
 #endif
+#ifdef MYSQL_SUPPORT
+    else if (global_session_list[index].type == MYSQL_SESSION) {
+        free((mi_session*)global_session_list[index].session);
+    }
+#endif
 
     global_session_list[index].type = 0;
 }
 
 
-int dbi_init (int session_dbi) 
+int dbi_init (int session_dbi)
 {
     session_dbi = session_type(session_dbi);
     if (!(session_dbi == TDCLI_SESSION ||
@@ -272,12 +280,12 @@ int dbi_init (int session_dbi)
         while (global_session_list[active_session_index].type) {
 
             active_session_index++;
-            if(active_session_index + 1 == CONN_SESSION_ENTRY_LIMIT) 
+            if(active_session_index + 1 == CONN_SESSION_ENTRY_LIMIT)
                 active_session_index = 0;
 
             /* Cannot find a empty slot */
             if(curr_index == active_session_index) {
-                fprintf(stdout, "-!- You can have at most %d sessions concurrently.\n", 
+                fprintf(stdout, "-!- You can have at most %d sessions concurrently.\n",
                     CONN_SESSION_ENTRY_LIMIT);
                 return -1;
             }
@@ -287,7 +295,7 @@ int dbi_init (int session_dbi)
         if (global_session_list[active_session_index].type) {
             if (global_session_list[active_session_index].type == session_dbi)
                 return 0;
-            else 
+            else
                 dbi_session_free(active_session_index);
         }
     }
@@ -318,7 +326,7 @@ int dbi_init (int session_dbi)
     }
 #endif
 #ifdef TDCLI_SUPPORT
-    if (session_dbi == TDCLI_SESSION) {
+    else if (session_dbi == TDCLI_SESSION) {
         td_session * conn_sess = (td_session*)malloc(sizeof(td_session));
         if(!conn_sess || tdcli_init(conn_sess) != EM_OK)
             return -1;
@@ -340,7 +348,7 @@ int dbi_init (int session_dbi)
 }
 
 
-int dbi_deinit_all () 
+int dbi_deinit_all ()
 {
     int i;
     for (i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++) {
@@ -351,7 +359,7 @@ int dbi_deinit_all ()
 }
 
 
-int dbi_connect (char* logon, int length) 
+int dbi_connect (char* logon, int length)
 {
     if ( 0 ) {
         /* dummy branch to ensure 'else if' is syntax-correct */
@@ -385,13 +393,13 @@ int dbi_connect (char* logon, int length)
 }
 
 
-int dbi_execute (char *req) 
+int dbi_execute (char *req)
 {
     if ( 0 ) {
         /* dummy branch to ensure 'else if' is syntax-correct */
     }
 #ifdef TDCLI_SUPPORT
-    if (global_session_list[active_session_index].type == TDCLI_SESSION) {
+    else if (global_session_list[active_session_index].type == TDCLI_SESSION) {
         if (tdcli_send_request(global_session_list[active_session_index].session, req) != EM_OK)
             return -1;
     }
@@ -419,13 +427,13 @@ int dbi_execute (char *req)
 }
 
 
-int dbi_fetch() 
+int dbi_fetch()
 {
     if ( 0 ) {
         /* dummy branch to ensure 'else if' is syntax-correct */
     }
 #ifdef TDCLI_SUPPORT
-    if (global_session_list[active_session_index].type == TDCLI_SESSION) {
+    else if (global_session_list[active_session_index].type == TDCLI_SESSION) {
         if (tdcli_fetch_request(global_session_list[active_session_index].session) != EM_OK)
             return -1;
     }
@@ -452,13 +460,13 @@ int dbi_fetch()
     return 0;
 }
 
-int dbi_finish() 
+int dbi_finish()
 {
     if ( 0 ) {
         /* dummy branch to ensure 'else if' is syntax-correct */
     }
 #ifdef TDCLI_SUPPORT
-    if (global_session_list[active_session_index].type == TDCLI_SESSION) {
+    else if (global_session_list[active_session_index].type == TDCLI_SESSION) {
         if (tdcli_end_request(global_session_list[active_session_index].session) != EM_OK)
             return -1;
     }
@@ -486,7 +494,7 @@ int dbi_finish()
 }
 
 
-static int dbi_end_one(int index) 
+static int dbi_end_one(int index)
 {
     if ( 0 ) {
         /* dummy branch to ensure 'else if' is syntax-correct */
@@ -520,16 +528,16 @@ static int dbi_end_one(int index)
 }
 
 
-int dbi_end() 
+int dbi_end()
 {
     return dbi_end_one(active_session_index);
 }
 
 
-int dbi_end_all() 
+int dbi_end_all()
 {
     int ret = 0, i, ret1;
-    for (i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++) { 
+    for (i = 0; i < CONN_SESSION_ENTRY_LIMIT; i++) {
         ret1 = dbi_end_one(i);
         if(ret1 &&!ret)
             ret = ret1;

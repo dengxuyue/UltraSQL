@@ -1,3 +1,9 @@
+/*
+ * summary: communication module with Teradata
+ *
+ * Status:
+ *     No big feature is underlying development
+ */
 #include "tdcli.h"
 #include "parcels.h"
 #include "pager.h"
@@ -9,7 +15,7 @@
 
 int interrupt_tdcli_fetching = 0;
 struct timeval request_beginning = {
-    .tv_sec = 0, 
+    .tv_sec = 0,
     .tv_usec =0
 };
 
@@ -18,7 +24,7 @@ char byte_inter_ptrs[] = {
     (char)63   /* UTF-8 */
 };
 
-void tdcli_inter_fetch (int signo) 
+void tdcli_inter_fetch (int signo)
 {
     interrupt_tdcli_fetching = 1;
 }
@@ -55,7 +61,7 @@ Int16 tdcli_init(td_session *sess)
 
     tdcli_set_options(sess);
     /* tdcli_set_dbcareax(sess); */
-    
+
     fprintf(stdout, "\nCLIv2   version is %s\n",   COPCLIVersion);
     fprintf(stdout,   "MTDP    version is %s\n",   COPMTDPVersion);
     fprintf(stdout,   "MOSIOS  version is %s\n",   COPMOSIosVersion);
@@ -73,7 +79,7 @@ Int16 tdcli_connect(td_session* sess, char* logon)
 
     Int32 result;
     gettimeofday(&request_beginning, 0);
-                   
+
     sess->dbcarea->logon_ptr=logon;
     sess->dbcarea->logon_len=strlen(logon);
     sess->dbcarea->func=DBFCON;
@@ -85,7 +91,7 @@ Int16 tdcli_connect(td_session* sess, char* logon)
     }
     sess->request = sess->dbcarea->o_req_id;
     sess->session = sess->dbcarea->o_sess_id;
-    
+
     return EM_OK;
 }
 
@@ -98,7 +104,7 @@ Int16 tdcli_send_request(td_session* sess, char *req)
     Int32 result;
     sess->dbcarea->func = DBFIRQ;
     gettimeofday(&request_beginning, 0);
-    
+
     sess->dbcarea->req_ptr = req;
     sess->dbcarea->req_len = strlen(req);
     DBCHCL(&result, sess->context, sess->dbcarea);
@@ -122,7 +128,7 @@ static inline void row_column_detail(int row, int col, char *act)
     printf(" %d rows", row);
     if(row && col)
         printf(" %d columns", col);
-    printf(" %s.\n\n", act); 
+    printf(" %s.\n\n", act);
     return;
 }
 
@@ -135,7 +141,7 @@ static void resp_count(Word ActivityType, UInt32 ActivityCount, Word FieldCount)
     struct timeval now;
     gettimeofday(&now, 0);
     if (request_beginning.tv_sec || request_beginning.tv_usec) {
-        elapsed_time = now.tv_sec - request_beginning.tv_sec + 
+        elapsed_time = now.tv_sec - request_beginning.tv_sec +
             0.001 * (now.tv_usec - request_beginning.tv_usec) * 0.001;
 
         request_beginning.tv_sec  = 0;
@@ -143,7 +149,7 @@ static void resp_count(Word ActivityType, UInt32 ActivityCount, Word FieldCount)
     }
     printf("-*- Total elapsed time is %.5f seconds.\n", elapsed_time);
 
-    if (ActivityCount > DEFAULT_SCREEN_HEIGHT && 
+    if (ActivityCount > DEFAULT_SCREEN_HEIGHT &&
         (ActivityType == PclRetStmt ||
          0)) {
         open_resp_pager();
@@ -260,7 +266,7 @@ static void resp_count(Word ActivityType, UInt32 ActivityCount, Word FieldCount)
         printf("-*- Show table/view/procedure successful.\n\n");
         break;
     case PclHelpStmt:       /* 50 */
-        printf("-*- Help/Explain information retrieved. %d rows returned.\n\n", 
+        printf("-*- Help/Explain information retrieved. %d rows returned.\n\n",
             ActivityCount);
         break;
     case PclDropProcStmt:   /* 103 */
@@ -300,7 +306,7 @@ static void resp_count(Word ActivityType, UInt32 ActivityCount, Word FieldCount)
         printf("-*- Set QUERY_BAND has been accepted.\n\n");
         break;
     default:
-        printf("-*- Unknown type (%u) request accepted. %d rows %d columns returned.\n\n", 
+        printf("-*- Unknown type (%u) request accepted. %d rows %d columns returned.\n\n",
             ActivityType, ActivityCount, FieldCount);
         break;
     }
@@ -327,28 +333,28 @@ Int16 tdcli_fetch_request(td_session *sess)
     sess->dbcarea->func = DBFFET;
 
     status = OK;
-    while (status == OK && !interrupt_tdcli_fetching) { 
+    while (status == OK && !interrupt_tdcli_fetching) {
         DBCHCL(&result,sess->context,sess->dbcarea);
-        if (result == REQEXHAUST) 
+        if (result == REQEXHAUST)
             status = STOP;
-        else if (result != EM_OK) 
+        else if (result != EM_OK)
             status = FAILED;
         else {
             INTERFACE_DEBUG("Flavor Type: %d", sess->dbcarea->fet_parcel_flavor);
-            
+
             switch (sess->dbcarea->fet_parcel_flavor) {
             case PclSUCCESS: /* 8 */
                 SuccPcl = (struct CliSuccessType *) sess->dbcarea->fet_data_ptr;
 
-                INTERFACE_DEBUG("Success parcel, length %d", (Int32)sess->dbcarea->fet_ret_data_len); 
+                INTERFACE_DEBUG("Success parcel, length %d", (Int32)sess->dbcarea->fet_ret_data_len);
                 INTERFACE_DEBUG("Activity Type : %d", SuccPcl->ActivityType);
                 INTERFACE_DEBUG("Activity Count: %d", SuccPcl->ActivityCount);
-                
+
                 resp_count(SuccPcl->ActivityType, 0, 0);
                 break;
 
             case PclFAILURE: /* 9 */
-                INTERFACE_DEBUG("Failure parcel, length %d", (Int32)sess->dbcarea->fet_ret_data_len); 
+                INTERFACE_DEBUG("Failure parcel, length %d", (Int32)sess->dbcarea->fet_ret_data_len);
                 tdcli_write_error(sess->dbcarea->fet_data_ptr);
                 break;
 
@@ -386,32 +392,32 @@ Int16 tdcli_fetch_request(td_session *sess)
                 INTERFACE_DEBUG("Field parcel, length %d", (Int32)sess->dbcarea->fet_ret_data_len);
                 if(DEBUG_ON & 0xF0) {
                     printf("----------- %d -----------------\n", response_type);
-                    for (i = 0; i < sess->dbcarea->fet_ret_data_len; i++) 
+                    for (i = 0; i < sess->dbcarea->fet_ret_data_len; i++)
                         printf("%c", sess->dbcarea->fet_data_ptr[i]);
                     printf("\n");
                 }
-                if (response_type == RESPONSE_TITLE || 
-                    response_type == RESPONSE_FORMAT || 
+                if (response_type == RESPONSE_TITLE ||
+                    response_type == RESPONSE_FORMAT ||
                     response_type == RESPONSE_RECEND)
                     data_type = 0;
                 else if (response_type == RESPONSE_DATA) {
                     if (showflag)
                         data_type = RESPONSE_DATA_SHOWDML;
-                    else 
+                    else
                         data_type = RESPONSE_DATA_REGULAR;
                 }
                 else {
                     data_type = 0;
                 }
-                retval_resp_buf = add_resp_buffer(response_type, 
-                                                 data_type, 
-                                                 sess->dbcarea->fet_ret_data_len, 
-                                                 sess->dbcarea->fet_data_ptr); 
+                retval_resp_buf = add_resp_buffer(response_type,
+                                                 data_type,
+                                                 sess->dbcarea->fet_ret_data_len,
+                                                 sess->dbcarea->fet_data_ptr);
                 if(retval_resp_buf < 0)
                     interrupt_tdcli_fetching = 1;
 
                 break;
- 
+
             case PclNULLFIELD: /* 19 */
                 INTERFACE_DEBUG_S("NullField parcel");
                 add_resp_buffer(response_type, data_type, 0, 0);
@@ -504,27 +510,27 @@ Int16 tdcli_fetch_request(td_session *sess)
             case PclASSIGNRSP: /* 101 */
                 INTERFACE_DEBUG_S("AssignRsp parcel");
                 break;
-               
+
             case PclCURSORDBC: /* 121 */
                 INTERFACE_DEBUG_S("CursorDBC parcel");
                 break;
-               
+
             case PclFLAGGER: /* 122 */
                 INTERFACE_DEBUG_S("Flagger parcel");
                 break;
-               
+
             case PclERRORINFO: /* 164 */
                 INTERFACE_DEBUG_S("ErrorInfo parcel");
                 break;
-               
+
             case PclSTATEMENTINFO: /* 169 */
                 INTERFACE_DEBUG_S("StatementInfo parcel");
                 break;
-               
+
             case PclSTATEMENTINFOEND: /* 170 */
                 INTERFACE_DEBUG_S("StatementInfoEnd parcel");
                 break;
-               
+
             case PclRESULTSET: /* 172 */
                 INTERFACE_DEBUG_S("ResultSet parcel");
                 break;
@@ -532,15 +538,15 @@ Int16 tdcli_fetch_request(td_session *sess)
             default:
                 INTERFACE_DEBUG_S("Unprocessed parcel");
                 break;
-               
+
             } /*end of switch*/
         } /*end of else*/
     } /*end of while*/
-    
+
     signal_resp_pager(SIG_IGN);
     close_resp_pager();
 
-    if(status == FAILED) { 
+    if(status == FAILED) {
         fprintf(stderr, "Fetch failed: %s\n",sess->dbcarea->msg_text);
         tdcli_end(sess);
         return -1;
@@ -574,9 +580,9 @@ Int16 tdcli_end(td_session* sess)
     sess->dbcarea->func = DBFDSC;
     DBCHCL(&result,sess->context, sess->dbcarea);
     DBCHCLN(&result,sess->context);
-    
+
     INTERFACE_DEBUG("Exiting: %s", sess->dbcarea->msg_text);
-    
+
     return 0;
 }
 
@@ -605,9 +611,9 @@ void tdcli_set_options(td_session* sess)
     sess->dbcarea->wait_across_crash = 'N';
     sess->dbcarea->wait_for_resp     = 'Y';
 
-    /* 
-     * Turn on the following flags to fix Bug 8. 
-     * 
+    /*
+     * Turn on the following flags to fix Bug 8.
+     *
      * sess->dbcarea->return_object   = 'D';
      */
     sess->dbcarea->consider_APH_resps = 'Y';
@@ -653,7 +659,7 @@ void tdcli_clear_dbcareax(td_session* sess)
 
 
 /*
- * /usr/include/dbcarea.h 
+ * /usr/include/dbcarea.h
  */
 void tdcli_set_dbcareax(td_session* sess)
 {
@@ -716,7 +722,7 @@ void tdcli_set_dbcareax(td_session* sess)
     memset(dbxilptr.d8xilpF2, 0, 2 * sizeof(Byte));
     memcpy(ext_ptr, &dbxilptr.d8xilpF2, 2 * sizeof(Byte));
     ext_ptr = (char *)ext_ptr + 2 * sizeof(Byte);
-    
+
 #if defined(_LP64) || defined(__LP64__) || defined(__64BIT__)
     /* Set second reserved field to zero */
     memset(dbxilptr.d8xilpP4, 0, 4 * sizeof(Byte));
@@ -729,7 +735,7 @@ void tdcli_set_dbcareax(td_session* sess)
     memcpy(ext_ptr, &dbxilptr.d8xilpPt, 4 * sizeof(char));
     ext_ptr = (char *)ext_ptr + 4 * sizeof(char);
 #endif
-    
+
     /* Set third reserved field to zero */
     memset(dbxilptr.d8xilpF3, 0, 4 * sizeof(UInt32));
     memcpy(ext_ptr, &dbxilptr.d8xilpF3, 4 * sizeof(UInt32));
@@ -746,14 +752,14 @@ void tdcli_set_dbcareax(td_session* sess)
     ext_ptr = (char *)ext_ptr + 4 * sizeof(Byte);
 
 #if defined(_LP64) || defined(__LP64__) || defined(__64BIT__)
-    /* Set address of the parcel body */                         
-    memcpy(dbxilptr.d8xilpPt, &SplFlag, 8);                      
-    memcpy(ext_ptr, &dbxilptr.d8xilpPt, 8 * sizeof(char));       
-    ext_ptr = (char *)ext_ptr + 8 * sizeof(char);                
-#else                                                        
-    /* Set reserved field to zero */                             
-    memset(dbxilptr.d8xilpP8, 0, 8 * sizeof(Byte));              
-    memcpy(ext_ptr, &dbxilptr.d8xilpP8, 8 * sizeof(Byte));       
-    ext_ptr = (char *)ext_ptr + 8 * sizeof(Byte);                
+    /* Set address of the parcel body */
+    memcpy(dbxilptr.d8xilpPt, &SplFlag, 8);
+    memcpy(ext_ptr, &dbxilptr.d8xilpPt, 8 * sizeof(char));
+    ext_ptr = (char *)ext_ptr + 8 * sizeof(char);
+#else
+    /* Set reserved field to zero */
+    memset(dbxilptr.d8xilpP8, 0, 8 * sizeof(Byte));
+    memcpy(ext_ptr, &dbxilptr.d8xilpP8, 8 * sizeof(Byte));
+    ext_ptr = (char *)ext_ptr + 8 * sizeof(Byte);
 #endif
-}                                                            
+}

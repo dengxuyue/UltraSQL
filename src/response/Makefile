@@ -1,7 +1,7 @@
 TOP_DIR=../..
 SRC_DIR=..
 
-C_SRC=parcels.c pager.c myresult.c export.c
+C_SRC=pager.c parcels.c myresult.c pqtuples.c export.c
 
 include $(SRC_DIR)/build/config.mk
 

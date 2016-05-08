@@ -36,7 +36,7 @@ ts_sigfunc signal_resp_pager (ts_sigfunc int_pager)
 
 void set_resp_width(int w)
 {
-    if (w > 0 && w < 65536) 
+    if (w > 0 && w < 65536)
         output_screen_width = w;
 }
 

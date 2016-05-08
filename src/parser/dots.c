@@ -9,6 +9,7 @@ mini_dots_t set_dots_list[] = {
    ,{"sqlsyntax",      9, DTD_SET_SQLSYNTAX}
    ,{"sqlcompliance", 13, DTD_SET_SQLCOMPLIANCE}
    ,{"protocal",       8, DTD_SET_PROTOCAL}
+   ,{"sidetitles",    10, DTD_SET_SIDETITLES}
 };
 
 mini_dots_t sql_compliance_list[] = {
@@ -199,6 +200,36 @@ int parse_set (char* text, valid_request* req)
 
         if (found)
             return 0;
+    }
+    else if(req->node.set.type == DTD_SET_SIDETITLES) {
+        int len;
+        while(*pn++ != '\0')
+            /*leave out space*/
+            if (!(*pn == ' ' || *pn == '\t'))
+                break;
+        len = 0;
+        while(len < 3) { /* off/on */
+            if (!((*(pn + len) >= 'a' && *(pn + len) <= 'z') ||
+                  (*(pn + len) >= 'A' && *(pn + len) <= 'Z')))
+                break;
+            len++;
+        }
+
+        if (len < 2) {
+            fprintf(stderr, "syntax error.\n");
+            return 1;
+        }
+        else if (!strncasecmp(pn, "on", 2))
+            req->node.set.value.sidetitles = 1;
+        else if (!strncasecmp(pn, "off", len > 2 ? len : 2))
+            req->node.set.value.sidetitles = 0;
+        else {
+            fprintf(stderr, "syntax error.\n");
+            return 1;
+        }
+
+        MINIPARSER_DEBUG("set-sidetitles: %d", req->node.set.value.sidetitles);
+        return 0;
     }
 
     return 1;

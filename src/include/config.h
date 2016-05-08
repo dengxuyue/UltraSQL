@@ -6,6 +6,8 @@
 #define POSTGRESQL_SUPPORT 1
 */
 
+#define MAX(x, y) ( (x) > (y) ? (x) : (y) )
+
 #define DEBUG_ON 0
 
 #define GEN_PTREE 1
