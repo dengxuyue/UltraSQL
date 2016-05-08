@@ -17,4 +17,6 @@ int pq_fetch   (pq_session* sess);
 int pq_finish  (pq_session* sess);
 int pq_end     (pq_session* sess);
 
+void set_pq_sidetitles(int on_off);
+
 #endif

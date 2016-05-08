@@ -1,6 +1,6 @@
 /*
  * util/debug.c
- * 
+ *
  * Copyright 2011 Xuyue Deng
  */
 
@@ -15,7 +15,7 @@ int trace_level = 0;
 
 static FILE* trace = NULL;
 
-int init_trace() 
+int init_trace()
 {
 	trace = NULL;
 
@@ -26,7 +26,7 @@ int init_trace()
 	char* penv = getenv("USQL_TRACE");
 
 	char* pfn;
-	if(penv) 
+	if(penv)
 		pfn = penv;
 	else
 		pfn = def_trace;
@@ -38,9 +38,9 @@ int init_trace()
 	return 1;
 }
 
-void dump_trace(int level, char* component, char* fmt, ...) 
+void dump_trace(int level, char* component, char* fmt, ...)
 {
-    if (!level || !trace_level || !trace) 
+    if (!level || !trace_level || !trace)
         return;
 
 	if (trace_level <= level) {
@@ -53,7 +53,7 @@ void dump_trace(int level, char* component, char* fmt, ...)
 	}
 }
 
-void fini_trace() 
+void fini_trace()
 {
 	if (trace) {
 		fclose(trace);

@@ -12,16 +12,16 @@ int append_setting_list (char* line)
         return 1;
 
     int i= 0, len= strlen(line);
-    while (line[i] != '\0' && (line[i] == ' ' || line [i] == '\t')) 
+    while (line[i] != '\0' && (line[i] == ' ' || line [i] == '\t'))
         i++;
 
     if (line[i] != '.')
         return -1;
-    
+
     if (len - i < 5) /*'.set q'*/
         return -1;
 
-    if (strncasecmp(line + i + 1, "set", 3)) 
+    if (strncasecmp(line + i + 1, "set", 3))
         return -1;
 
     strncpy(setting_list[setting_count], line + i, len - i);

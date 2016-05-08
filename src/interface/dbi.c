@@ -29,6 +29,12 @@ void enable_multi_session()
 }
 
 
+void set_response_sidetitles(int on_off)
+{
+    set_pq_sidetitles(on_off);
+}
+
+
 static inline int session_type (int prot) {
     int type = 0;
     switch (prot) {

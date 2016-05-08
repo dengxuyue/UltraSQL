@@ -8,4 +8,6 @@ typedef struct pq_tuple_t {
     struct pq_tuple_t* next;
 } pq_tuple;
 
+void set_pq_sidetitles_impl(int on_off);
+
 #endif

@@ -5,7 +5,7 @@
 
 typedef struct mini_yy_extra_type {
     char* textbuf;
-    valid_request *request; 
+    valid_request *request;
 } mini_yy_extra_type;
 
 typedef struct mini_kw_t {

@@ -25,11 +25,12 @@ int  dbi_connect (char* logon, int length);
 int  dbi_execute (char *req);
 int  dbi_fetch ();
 int  dbi_finish ();
-int  dbi_end (); 
-int  dbi_end_all (); 
+int  dbi_end ();
+int  dbi_end_all ();
 int  dbi_deinit_all ();
 
 int  adjust_active_session_index (char *alias);
 void enable_multi_session ();
+void set_response_sidetitles(int on_off);
 
 #endif /* _DBI_H_ */

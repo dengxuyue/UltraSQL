@@ -18,7 +18,7 @@ enum {
     unknown$,
 };
 
-static char* internal_section_heading[] = 
+static char* internal_section_heading[] =
 {
     "password",
     "setting",
@@ -31,7 +31,7 @@ int internal_section_type = unknown$;
  * 1) find the section type  -- return value
  * 2) find out whether the current line is empty -- argument: null_line
  */
-static int find_section_type (char* line, int* null_line) 
+static int find_section_type (char* line, int* null_line)
 {
     int i, len = strlen(line);
     int start, end, max;
@@ -43,27 +43,27 @@ static int find_section_type (char* line, int* null_line)
 
         if (line[i] == '[')
             start = i + 1;
-        else if (line[i] == ']') 
+        else if (line[i] == ']')
             end = i - 1;
     }
 
     if (start < end) {
         for(i = 0; i < type_count$; i++) {
             max = strlen(internal_section_heading[i]);
-            if (max > end - start + 1) 
+            if (max > end - start + 1)
                 max = end - start + 1;
             if (!strncasecmp(line + start, internal_section_heading[i], max)) {
                 return i;
             }
         }
-        
+
     }
 
     return -1;
 }
 
 
-int init_profile () 
+int init_profile ()
 {
     struct passwd *pw = getpwuid(getuid());
     const char *homedir = pw->pw_dir;
@@ -84,7 +84,7 @@ int init_profile ()
         line_len = getline(&line, &max_len, pf);
         if (line_len == -1)
             break;
-        if (line_len > PROFILE_LINE_LENGTH) 
+        if (line_len > PROFILE_LINE_LENGTH)
             goto errout;
 
         line_no++;
@@ -100,14 +100,14 @@ int init_profile ()
             if (null_line == 0 && add_dbs_passwd(line) == -1)
                 goto errout;
         }
-        else if (internal_section_type == setting$) { 
+        else if (internal_section_type == setting$) {
             if (null_line == 0 && append_setting_list(line) == -1)
                 goto errout;
         }
 
         free(line);
     }
-   
+
     fclose(pf);
     return 0;
 

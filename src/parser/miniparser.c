@@ -13,7 +13,7 @@
 char internal_delimiter[SET_DELIMITER_LENGTH];
 
 mini_dots_t mini_dots_list[] = {
-    {"logon",   5, DTD_LOGON} 
+    {"logon",   5, DTD_LOGON}
    ,{"logoff",  6, DTD_LOGOFF}
    ,{"quit",    4, DTD_QUIT}
    ,{"set",     3, DTD_SET}
@@ -46,13 +46,13 @@ void reset_parser ()
 void set_parser_delimiter (char* delimiter)
 {
     int len = strlen(delimiter);
-    if (len) 
+    if (len)
         strncpy(internal_delimiter, delimiter, len);
     internal_delimiter[len] = '\0';
 }
 
 
-void set_parser_sqlsyntax (int on) 
+void set_parser_sqlsyntax (int on)
 {
     if (on)
         internal_sqlsyntax_on = 1;
@@ -61,7 +61,7 @@ void set_parser_sqlsyntax (int on)
 }
 
 
-void set_parser_sqlcompliance (int compliance) 
+void set_parser_sqlcompliance (int compliance)
 {
     switch (compliance) {
     case SQL_COMPLIANCE_DEFAULT:
@@ -78,7 +78,7 @@ void set_parser_sqlcompliance (int compliance)
 }
 
 
-int parse (char* text, valid_request *req) 
+int parse (char* text, valid_request *req)
 {
     MINIPARSER_DEBUG_C();
 
@@ -86,16 +86,16 @@ int parse (char* text, valid_request *req)
     int st = coarse_check(text, has_end_delimiter);
     if (st == DOT_DIRECTIVE)
         return parse_dot_directive(text, req);
-    else if (st == END_DELIMITER) 
+    else if (st == END_DELIMITER)
         return parse_end_delimiter(text, req);
-    else if (st == SQL_STATEMENT) 
+    else if (st == SQL_STATEMENT)
         return parse_sql_statement(text, req);
 
     return PARSE_CONT;
 }
 
 
-int parse_end_delimiter (char* text, valid_request *req) 
+int parse_end_delimiter (char* text, valid_request *req)
 {
     MINIPARSER_DEBUG_C();
 
@@ -120,13 +120,13 @@ int parse_end_delimiter (char* text, valid_request *req)
 
     if ( end - start + 1 < dlen)
         return PARSE_CONT;
-   
-    if (strncmp(internal_delimiter, text + start, dlen)) 
+
+    if (strncmp(internal_delimiter, text + start, dlen))
         return PARSE_CONT;
 
-    if (start + 1 > STATEMENT_LENGTH_LIMIT) 
+    if (start + 1 > STATEMENT_LENGTH_LIMIT)
         req->validtext = (char*)malloc(start + 1);
-    else 
+    else
         req->validtext = req->prealloc_text;
     strncpy(req->validtext, text, start);
     req->validtext[start] = '\0';
@@ -143,12 +143,12 @@ int parse_dot_directive (char* text, valid_request *req)
     char *ptr = text;
     int found_dot = 0;
     for (i = 0; i < len; i++) {
-        if (!(*ptr == ' ' || *ptr == '\t' || *ptr == '.')) 
+        if (!(*ptr == ' ' || *ptr == '\t' || *ptr == '.'))
             break;
-        
+
         ptr++;
     }
-    
+
     req->type = DOT_DIRECTIVE;
 
     int dots_list_size = sizeof(mini_dots_list)/sizeof(mini_dots_list[0]);
@@ -162,7 +162,7 @@ int parse_dot_directive (char* text, valid_request *req)
             break;
         }
     }
- 
+
     if (!req->subtype) {
         fprintf(stderr, "Syntax error, unknown dot directive.\n");
         return PARSE_INVALID;
@@ -172,15 +172,15 @@ int parse_dot_directive (char* text, valid_request *req)
         return PARSE_QUIT;
 
     if (req->subtype == DTD_LOGON ) {
-        if (parse_logon(ptr, req)) 
+        if (parse_logon(ptr, req))
             return PARSE_INVALID;
     }
     else if (req->subtype == DTD_SET ) {
-        if (parse_set(ptr, req)) 
+        if (parse_set(ptr, req))
             return PARSE_INVALID;
     }
     else if (req->subtype == DTD_SESSION ) {
-        if (parse_session(ptr, req)) 
+        if (parse_session(ptr, req))
             return PARSE_INVALID;
     }
 
@@ -206,7 +206,7 @@ int parse_sql_statement (char* text, valid_request *req)
             ret = PARSE_INVALID;
         else
             ret = PARSE_VALID;
-        
+
         fini_parser();
         scanner_fini(yyscanner);
     }
@@ -214,19 +214,19 @@ int parse_sql_statement (char* text, valid_request *req)
         ret = PARSE_VALID;
 
     if (ret == PARSE_VALID) {
-        if (len + 1 > STATEMENT_LENGTH_LIMIT) 
+        if (len + 1 > STATEMENT_LENGTH_LIMIT)
             req->validtext = (char*)malloc(len + 1);
-        else 
+        else
             req->validtext = req->prealloc_text;
         strncpy(req->validtext, text, len);
         req->validtext[len] = '\0';
     }
-    
+
     if (yyresult == 2) {
         fprintf(stderr, "Insufficient memory.\n");
         exit(1);
     }
-        
+
     return ret;
 }
 

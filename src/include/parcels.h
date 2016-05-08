@@ -31,7 +31,7 @@ typedef struct column_response_t {
     } column;
 
     /* pre-alloc block for small parcel data*/
-    char block[BUFFER_PARCEL_BLOCK]; 
+    char block[BUFFER_PARCEL_BLOCK];
 } column_response;
 
 ts_sigfunc sigal_resp_pager (ts_sigfunc int_pager);

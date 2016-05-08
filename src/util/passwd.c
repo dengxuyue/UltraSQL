@@ -12,10 +12,10 @@ int add_dbs_passwd (char* line)
         return 1;
 
     int start, i;
-    int line_len = strlen(line); 
+    int line_len = strlen(line);
 
     /*exclude CRLF if any*/
-    while (line[line_len - 1] == '\n' || line[line_len - 1] == '\r') 
+    while (line[line_len - 1] == '\n' || line[line_len - 1] == '\r')
         line_len--;
 
     start = i = 0;

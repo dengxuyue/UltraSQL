@@ -11,10 +11,17 @@
 #include <string.h>
 #include <stdio.h>
 
+int max_title_attr_length = 0;
 pq_tuple *title = 0;
 pq_tuple *title_ending = 0;
 pq_tuple *tuple = 0;
 pq_tuple *tuple_ending = 0;
+
+static int sidetitles_pqlib = 0;
+void set_pq_sidetitles_impl(int on_off)
+{
+    sidetitles_pqlib = on_off ? 1 : 0;
+}
 
 
 static pq_tuple* add_attribute(int length, char* ptr)
@@ -49,6 +56,8 @@ int append_title(int length, char* ptr)
             title = tp;
             title_ending = tp;
         }
+        if (strlen(tp->data) > max_title_attr_length)
+            max_title_attr_length = strlen(tp->data);
 
         return 0;
     }
@@ -91,6 +100,9 @@ static void free_tuple_list(pq_tuple *head)
 
 void flush_title()
 {
+    if (sidetitles_pqlib)
+        return;
+
     FILE*   fout = stdout;
     int        i = 0, len, k;
     pq_tuple* tp = title;
@@ -119,8 +131,10 @@ void flush_title()
     fprintf(fout, "\n");
 
     /* free "title" list */
-    free_tuple_list(title);
-    title = 0;
+    if (!sidetitles_pqlib) {
+        free_tuple_list(title);
+        title = 0;
+    }
 }
 
 
@@ -129,6 +143,11 @@ void flush_tuple ()
     FILE* fout = stdout;
     if(internal_pager)
         fout = internal_pager;
+
+    if (sidetitles_pqlib) {
+        flush_tuple_pivot(fout);
+        return;
+    }
 
     pq_tuple* tp = tuple;
     int k, len, i = 0;
@@ -145,11 +164,46 @@ void flush_tuple ()
     }
     fprintf(fout, "\n");
 
-    /* free "title" list */
+    /* free "tuple" list */
     free_tuple_list(tuple);
     tuple = 0;
 }
 
+
+void flush_tuple_pivot (FILE* fout)
+{
+    pq_tuple* up = tuple;
+    pq_tuple* ip = title;
+    int k;
+    int max_tuple_attr_length = 0;
+    while(up) {
+        fprintf(fout, ip->data);
+        for (k = strlen(ip->data); k < max_title_attr_length; k++)
+            fprintf(fout, " ");
+
+        fprintf(fout, "|");
+        fprintf(fout, up->data);
+        if (max_tuple_attr_length < strlen(up->data))
+            max_tuple_attr_length = strlen(up->data);
+
+
+        up = up->next;
+        ip = ip->next;
+        fprintf(fout, "\n");
+    }
+
+    /* free "tuple" list */
+    free_tuple_list(tuple);
+    tuple = 0;
+    for(k = 0; k < MAX(max_title_attr_length + max_tuple_attr_length + 1, 75); k++)
+        fprintf(fout, "-");
+    fprintf(fout, "\n");
+}
+
 void flush_end()
 {
+    if (sidetitles_pqlib) {
+        free_tuple_list(title);
+        title = 0;
+    }
 }

@@ -144,7 +144,7 @@ int exec_dot_set (valid_request * req, int quiet)
         break;
 
     case DTD_SET_SIDETITLES:
-        /* set_parser_protocal(req->node.set.value.sidetitles); */
+        set_response_sidetitles(req->node.set.value.sidetitles);
         if (!quiet)
             fprintf(stdout, "-*- You have turn %s side titles.\n\n",
                 req->node.set.value.sidetitles ? "on" : "off");

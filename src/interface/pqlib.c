@@ -19,7 +19,11 @@ void pqlib_inter_fetch (int signo)
     interrupt_pqlib_fetching = 1;
 }
 
-static int sidetitles_pqlib = 0;
+void set_pq_sidetitles(int on_off)
+{
+    set_pq_sidetitles_impl(on_off);
+}
+
 
 int pq_init (pq_session * sess)
 {
@@ -244,10 +248,13 @@ int pq_fetch (pq_session* sess)
         flush_tuple();
     }
 
+    flush_end();
     if (!field_length)
         free(field_length);
     signal_resp_pager(SIG_IGN);
     close_resp_pager();
+
+    printf("\n\n");
 
     return 0;
 }

@@ -93,12 +93,30 @@
         dialects include cliv2 (for Teradata), odbc, pq, and mysql.
         The default option is pq for PostgreSQL.
 
-  4.6 show one or all sessions
+  4.6 set side-titles
+    Command: .set sidetitles [on|off]
+    Synopsis: set query result side-titles on or off.
+        If sidetitles is off (and this is the default case), the query
+        result set will be display normally, e.g.
+        a    |   b
+        -----+------
+            2|     3
+            4|     5
+
+        If sidetitles is on, above result result will be displayed as
+        a    |    2
+        b    |    3
+        ----------------------------------
+        a    |    4
+        b    |    5
+        ----------------------------------
+
+  4.7 show one or all sessions
     Command: .session show [all|alias#]
     Synopsis: Show all sessions, specified session through alias or 
         current active session;
 
-  4.7) select one working session in multi-session mode
+  4.8) select one working session in multi-session mode
     Command: .session select alias#
     Synopsis:
 

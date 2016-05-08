@@ -4,7 +4,7 @@
 #include <string.h>
 
 mini_dots_t set_dots_list[] = {
-    {"width",          5, DTD_SET_WIDTH} 
+    {"width",          5, DTD_SET_WIDTH}
    ,{"delimiter",      9, DTD_SET_DELIMITER}
    ,{"sqlsyntax",      9, DTD_SET_SQLSYNTAX}
    ,{"sqlcompliance", 13, DTD_SET_SQLCOMPLIANCE}
@@ -13,7 +13,7 @@ mini_dots_t set_dots_list[] = {
 };
 
 mini_dots_t sql_compliance_list[] = {
-    {"ansi",        4, SQL_COMPLIANCE_ANSI} 
+    {"ansi",        4, SQL_COMPLIANCE_ANSI}
    ,{"teradata",    8, SQL_COMPLIANCE_TERADATA}
    ,{"postgresql", 10, SQL_COMPLIANCE_POSTGRESQL}
    ,{"mysql",       5, SQL_COMPLIANCE_MYSQL}
@@ -26,7 +26,7 @@ mini_dots_t session_list[] = {
 
 mini_dots_t dbi_protocal_list[] = {
     {"cliv2",       5, DBI_PROTOCAL_TDCLI}
-   ,{"odbc",        4, DBI_PROTOCAL_ODBC} 
+   ,{"odbc",        4, DBI_PROTOCAL_ODBC}
    ,{"pq",          2, DBI_PROTOCAL_POSTGRESQL}
    ,{"mysql",       5, DBI_PROTOCAL_MYSQL}
 };
@@ -38,7 +38,7 @@ char internal_protocal[LOGON_PROTOCAL_LENGTH];
 void set_parser_protocal (char* protoc)
 {
     int len = strlen(protoc);
-    if (len) 
+    if (len)
         strncpy(internal_protocal, protoc, len);
     internal_protocal[len] = '\0';
 }
@@ -48,7 +48,7 @@ int parse_set (char* text, valid_request* req)
 {
     req->node.set.type = 0;
     char* ptr = text;
-    while(*ptr++ != '\0') 
+    while(*ptr++ != '\0')
         /*leave out space*/
         if (!(*ptr == ' ' || *ptr == '\t'))
             break;
@@ -67,15 +67,15 @@ int parse_set (char* text, valid_request* req)
     if(req->node.set.type == DTD_SET_WIDTH) {
         char num[SET_WIDTH_LENGTH];
         int nn = 0;
-        while(*pn++ != '\0') 
+        while(*pn++ != '\0')
             /*leave out space*/
             if (!(*pn == ' ' || *pn == '\t'))
                 break;
-        
+
         while(nn < SET_WIDTH_LENGTH - 1) {
-            if (*pn >= '0' && *pn <= '9') 
+            if (*pn >= '0' && *pn <= '9')
                 num[nn++] = *pn++;
-            else 
+            else
                 break;
         }
         num[nn + 1] = '\0';
@@ -85,7 +85,7 @@ int parse_set (char* text, valid_request* req)
     }
     else if(req->node.set.type == DTD_SET_DELIMITER) {
         int len;
-        while(*pn++ != '\0') 
+        while(*pn++ != '\0')
             /*leave out space*/
             if (!(*pn == ' ' || *pn == '\t'))
                 break;
@@ -105,7 +105,7 @@ int parse_set (char* text, valid_request* req)
     }
     else if(req->node.set.type == DTD_SET_SQLSYNTAX) {
         int len;
-        while(*pn++ != '\0') 
+        while(*pn++ != '\0')
             /*leave out space*/
             if (!(*pn == ' ' || *pn == '\t'))
                 break;
@@ -121,9 +121,9 @@ int parse_set (char* text, valid_request* req)
             fprintf(stderr, "syntax error.\n");
             return 1;
         }
-        else if (!strncasecmp(pn, "on", 2)) 
+        else if (!strncasecmp(pn, "on", 2))
             req->node.set.value.sqlsyntax = 1;
-        else if (!strncasecmp(pn, "off", len > 2 ? len : 2)) 
+        else if (!strncasecmp(pn, "off", len > 2 ? len : 2))
             req->node.set.value.sqlsyntax = 0;
         else {
             fprintf(stderr, "syntax error.\n");
@@ -135,7 +135,7 @@ int parse_set (char* text, valid_request* req)
     }
     else if(req->node.set.type == DTD_SET_SQLCOMPLIANCE) {
         int len;
-        while(*pn++ != '\0') 
+        while(*pn++ != '\0')
             /*leave out space*/
             if (!(*pn == ' ' || *pn == '\t'))
                 break;
@@ -153,12 +153,12 @@ int parse_set (char* text, valid_request* req)
         for(k = 0; k < list_size; k++) {
             llen = len;
             if (sql_compliance_list[k].length < llen)
-                llen = sql_compliance_list[k].length; 
+                llen = sql_compliance_list[k].length;
             if(!strncasecmp(pn, sql_compliance_list[k].name, llen)) {
                 req->node.set.value.sqlcompliance = sql_compliance_list[k].value;
             }
         }
-        
+
         if (!req->node.set.value.sqlcompliance) {
             fprintf(stderr, "syntax error.\n");
             return 1;
@@ -169,7 +169,7 @@ int parse_set (char* text, valid_request* req)
     }
     else if(req->node.set.type == DTD_SET_PROTOCAL) {
         int len;
-        while(*pn++ != '\0') 
+        while(*pn++ != '\0')
             /*leave out space*/
             if (!(*pn == ' ' || *pn == '\t'))
                 break;
@@ -187,7 +187,7 @@ int parse_set (char* text, valid_request* req)
         int list_size = sizeof(dbi_protocal_list)/sizeof(dbi_protocal_list[0]);
         for(k = 0; k < list_size; k++) {
             llen = len;
-            if (dbi_protocal_list[k].length < llen) 
+            if (dbi_protocal_list[k].length < llen)
                 llen = dbi_protocal_list[k].length;
             if(!strncasecmp(pn, dbi_protocal_list[k].name, llen)) {
                 if (llen) {
@@ -239,7 +239,7 @@ int parse_set (char* text, valid_request* req)
 /*
  * .logon [PROTOCAL://]HOSTNAME[:PORT]/USER[@DBNAME],PASSWORD
  */
-int parse_logon (char* text, valid_request* req) 
+int parse_logon (char* text, valid_request* req)
 {
     int flag = 0;
     /* protocal : 1
@@ -269,7 +269,7 @@ int parse_logon (char* text, valid_request* req)
     }
     start = i;
     /* keep i */
- 
+
     /*
      * search for protocal/datasource
      */
@@ -292,11 +292,11 @@ int parse_logon (char* text, valid_request* req)
             break;
     }
 
-    if (*(text + i) == '/' ) 
+    if (*(text + i) == '/' )
         flag = 2; /*datasource*/
     else if (*(text + i) == ':' ) {
         if ( i + 1 < len && *(text + i + 1) == '/' &&
-             i + 2 < len && *(text + i + 2) == '/' ) 
+             i + 2 < len && *(text + i + 2) == '/' )
             flag = 1; /*procotal*/
         else if (i + 1 < len && *(text + i + 1) >= '0' && *(text + i + 1) <= '9' &&
                  i + 2 < len && *(text + i + 2) >= '0' && *(text + i + 2) <= '9' )
@@ -320,7 +320,7 @@ int parse_logon (char* text, valid_request* req)
 
         /* continue to serach for datasource */
         i += 3;
-        for(; i < len; i++) 
+        for(; i < len; i++)
             if (!(*(text + i) == ' ' || *(text + i) == '\t'))
                 break;
         start = i;
@@ -378,12 +378,12 @@ int parse_logon (char* text, valid_request* req)
     if (*(text + i) == ':') {
         flag = 3;
         i++;
-        for(; i < len; i++) 
+        for(; i < len; i++)
             if (!(*(text + i) == ' ' || *(text + i) == '\t'))
                 break;
-        start = i; 
+        start = i;
         for (; i < len; i++) {
-            if (!(*(text + i) >= '0' && *(text + i) <= '9')) 
+            if (!(*(text + i) >= '0' && *(text + i) <= '9'))
                 break;
         }
         end = i;
@@ -407,7 +407,7 @@ int parse_logon (char* text, valid_request* req)
 
     /* search for user */
     i++;
-    for(; i < len; i++) 
+    for(; i < len; i++)
         if (!(*(text + i) == ' ' || *(text + i) == '\t'))
             break;
     start = i;
@@ -422,9 +422,9 @@ int parse_logon (char* text, valid_request* req)
             break;
         }
     }
-    if (len == i) 
+    if (len == i)
         end = i;
-    if (end > start) 
+    if (end > start)
         flag = 4;
 
     if (flag == 4) {
@@ -459,9 +459,9 @@ int parse_logon (char* text, valid_request* req)
                 break;
             }
         }
-        if (len == i) 
+        if (len == i)
             end = i;
- 
+
         if(end - start + 1 < LOGON_DBNAME_LENGTH) {
             strncpy(req->node.logon.dbname, text + start, end - start);
             *(req->node.logon.dbname + end - start) = '\0';
@@ -472,17 +472,17 @@ int parse_logon (char* text, valid_request* req)
             return 1;
         }
     }
- 
+
 
     return 0;
 }
 
 
-int parse_session (char* text, valid_request* req) 
+int parse_session (char* text, valid_request* req)
 {
     req->node.session.type = 0;
     char* ptr = text;
-    while(*ptr++ != '\0') 
+    while(*ptr++ != '\0')
         /*leave out space*/
         if (!(*ptr == ' ' || *ptr == '\t'))
             break;
@@ -508,9 +508,9 @@ int parse_session (char* text, valid_request* req)
                 break;
             pn++;
         }
-        
+
         int len = 0;
-        while( *(pn + len) != '\0' && 
+        while( *(pn + len) != '\0' &&
                ((*(pn + len) >= '0' && *(pn + len) <= '9') ||
                 (*(pn + len) >= 'a' && *(pn + len) <= 'z') ||
                 (*(pn + len) >= 'A' && *(pn + len) <= 'Z')))
@@ -533,6 +533,6 @@ int parse_session (char* text, valid_request* req)
 
         return 0;
     }
- 
+
     return 0;
 }

@@ -23,11 +23,11 @@ ts_sigfunc ts_signal(int signo, ts_sigfunc func)
 }
 
 
-int ts_getpass(char *lineptr, int n, FILE *stream) 
+int ts_getpass(char *lineptr, int n, FILE *stream)
 {
     struct termios old, new;
     int nread;
-    
+
     /* Turn echoing off and fail if we can't. */
     if (tcgetattr (fileno (stream), &old) != 0)
       return -1;
@@ -35,7 +35,7 @@ int ts_getpass(char *lineptr, int n, FILE *stream)
     new.c_lflag &= ~ECHO;
     if (tcsetattr (fileno (stream), TCSAFLUSH, &new) != 0)
       return -1;
-    
+
     /* Read the password. */
     nread = getline (&lineptr, &n, stream);
     char *p = lineptr + nread - 1;
@@ -43,9 +43,9 @@ int ts_getpass(char *lineptr, int n, FILE *stream)
         nread--;
         *p = '\0';
     }
-    
+
     /* Restore terminal. */
     (void) tcsetattr (fileno (stream), TCSAFLUSH, &old);
-    
+
     return nread;
 }
