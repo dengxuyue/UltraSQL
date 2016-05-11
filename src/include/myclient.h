@@ -17,4 +17,5 @@ int mi_fetch   (mi_session* sess);
 int mi_finish  (mi_session* sess);
 int mi_end     (mi_session* sess);
 
+void set_my_sidetitles(int on_off);
 #endif

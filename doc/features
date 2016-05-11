@@ -18,7 +18,7 @@
     1.3) .quit
     1.4) .set width
     1.5) .set sidetitles [on|off] 
-         Not implemented for Teradata, nor MySQL
+         Not implemented for Teradata
 
 2. Dot directives -- enhancements
     The following dot directives are not supported by BTEQ

@@ -14,6 +14,13 @@ void mysql_inter_fetch (int signo)
 }
 
 
+static int sidetitles_mysql = 0;
+void set_my_sidetitles(int on_off)
+{
+    sidetitles_mysql = on_off ? 1 : 0;
+}
+
+
 inline void mysql_write_error(MYSQL *conn)
 {
     fprintf(stdout, "-!- Error code   : %u\n", mysql_errno(conn));
@@ -152,7 +159,11 @@ int mi_execute (mi_session* sess, char* req)
         return -1;
     }
 
+    /*
+     * Gradually retrieve result set
     MYSQL_RES * res = mysql_use_result(sess->connection);
+    */
+    MYSQL_RES * res = mysql_store_result(sess->connection);
     if(!res) {
         fprintf(stdout, "-!- Error when initializing the query result..\n");
         mysql_write_error(sess->connection);
@@ -171,28 +182,109 @@ int mi_fetch (mi_session* sess)
 
     MYSQL_FIELD *fields;
     MYSQL_ROW   row;
-    unsigned int num_fields, i;
-    unsigned long *lengths;
+    MYSQL_RES   res;
 
+    unsigned int num_rows = 0, num_fields, i, j;
+    unsigned long *lengths;
+    int len;
+
+    num_rows   = mysql_num_rows(sess->portal);
     num_fields = mysql_num_fields(sess->portal);
     fields     = mysql_fetch_fields(sess->portal);
     if (!fields) {
         fprintf(stdout, "-!- Errors in retrieving the column names of the query result..\n");
+        return 1;
     }
-    for(i = 0; i < num_fields; i++) {
-        printf("%.*s", fields[i].name_length, fields[i].name);
+    fprintf(stdout, "-*- Query has been complete. %d rows %d columns returned.\n\n",
+                num_rows, num_fields);
+
+    FILE* fout = stdout;
+    if (num_rows > DEFAULT_SCREEN_HEIGHT) {
+        open_resp_pager();
+        if(internal_pager) {
+            fout = internal_pager;
+            signal_resp_pager(mysql_inter_fetch);
+        }
     }
-    printf("\n");
+
+    /* sidetitles = on */
+    if(!sidetitles_mysql) {
+
+        /*
+         * print result set header
+         */
+        for(i = 0; i < num_fields; i++) {
+            if (i) fprintf(fout, "|");
+            len = fprintf(fout, "%s", fields[i].name);
+            for(j = len; j < MAX(fields[i].name_length, fields[i].max_length);  j++)
+                fprintf(fout, " ");
+        }
+        fprintf(fout, "\n");
+        for(i = 0; i < num_fields; i++) {
+            if (i) fprintf (fout, "+");
+            for(j = 0; j < MAX(fields[i].name_length, fields[i].max_length);  j++)
+                fprintf(fout, "-");
+        }
+        fprintf(fout, "\n");
+    }
+
+    /* for sidetiles */
+    signed int max_title_length = 0;
+    int max_field_length;
 
     while ((row = mysql_fetch_row(sess->portal)))
     {
-        lengths  = mysql_fetch_lengths(sess->portal);
-        for(i = 0; i < num_fields; i++) {
-            printf("[%.*s] ", (int) lengths[i],
-                row[i] ? row[i] : "NULL");
+       /* it is not necesary!
+        * lengths  = mysql_fetch_lengths(sess->portal);
+        */
+
+        if (sidetitles_mysql) {
+            /* sidetitles = on */
+
+            if (max_title_length < 1)
+                for(i = 0; i < num_fields; i++)
+                    if (max_title_length < fields[i].name_length)
+                        max_title_length = fields[i].name_length;
+
+            max_field_length = -1;
+            for(i = 0; i < num_fields; i++) {
+                len = fprintf(fout, fields[i].name);
+                for(j = len; j < max_title_length; j++)
+                    fprintf(fout, " ");
+
+                fprintf(fout, "|");
+                len = fprintf(fout, "%s", (row[i] ? row[i] : "NULL"));
+                if (len > max_field_length)
+                    len = max_field_length;
+                fprintf(fout, "\n");
+            }
+
+            /* separator */
+            for(j = 0; j < max_title_length; j++)
+                fprintf(fout, "-");
+            fprintf(fout, "+");
+            for(j = max_title_length + 1;
+                j < MAX(max_title_length + 1 + max_field_length, 75);
+                j++)
+                fprintf(fout, "-");
         }
-        printf("\n");
+        else {
+            /* sidetitles = off */
+            for(i = 0; i < num_fields; i++) {
+                if (i) fprintf (fout, "|");
+                len = fprintf(fout, "%s", (row[i] ? row[i] : "NULL"));
+                for(j = len; j < MAX(fields[i].name_length, fields[i].max_length);  j++)
+                    fprintf(fout, " ");
+            }
+        }
+
+        fprintf(fout, "\n");
+        if (interrupt_mysql_fetching)
+            break;
     }
+
+    signal_resp_pager(SIG_IGN);
+    close_resp_pager();
 
     return 0;
 }

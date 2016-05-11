@@ -1,6 +1,6 @@
 
 PQ_HOME=$(HOME)/local/pgsql/9.5
-MY_HOME=$(HOME)/local/mysql-cluster/7
+MY_HOME=$(HOME)/local/mysql/5.7
 
 export PQ_HOME MY_HOME TDODBC
 

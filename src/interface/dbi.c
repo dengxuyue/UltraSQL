@@ -32,6 +32,7 @@ void enable_multi_session()
 void set_response_sidetitles(int on_off)
 {
     set_pq_sidetitles(on_off);
+    set_my_sidetitles(on_off);
 }
 
 
